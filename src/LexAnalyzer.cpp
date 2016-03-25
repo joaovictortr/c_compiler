@@ -21,12 +21,12 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input)
     const string sString = "\"(" +sLetter+ "|" +sDigit+ "|" +"\\s)*\""; //string = "[letra|digito|espaco]*"
     const string sOP_log = "(&&|\\|\\|)"; //oper_log = &&| ||
     const string sOP_rel = "(!=|==|<=|>=|>|<)";
-    const string sOP_art = "(+|-|*|%|/|#)";
+    const string sOP_art = "(\\+|\\-|\\*|\\%|\\/|\\#)";
     const string sExpr = "("+sNum+"|"+sId+")" + "("+sOP_log+"|"+sOP_rel+")" + "("+sNum+"|"+sId+")";
     const string sExpr_art = "("+sNum+"|"+sId+")" + sOP_art + "("+sNum+"|"+sId+")";
     const string sVar = sType+"\\s"+sId;
     const string sAttribution = "("+sId+"="+sNum+";)|("+sId+"="+sId+";)|("+sId+"="+sChar+";)|("+sId+"="+sString+";)|("+sId+"="+sExpr_art+";)";
-    const string sIncrement = "("+sId+"++\\))|("+sId+"++;)|("+sId+"--\\))|("+sId+"--;))";
+    const string sIncrement = "("+sId+"\\+\\+\\))|("+sId+"\\+\\+;)|("+sId+"\\-\\-\\))|("+sId+"\\-\\-;)";
 
     rules_ = {
         { "Type",         boost::regex(sType) },
@@ -51,7 +51,6 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input)
 
 bool LexAnalyzer::getToken(string& tokenDst)
 {
-    /*
     int line_pos = 0;
     while(1) {
         if (curLine_.empty()) {
@@ -71,7 +70,7 @@ bool LexAnalyzer::getToken(string& tokenDst)
 
 
     }
-    */
+
     return true;
 }
 
