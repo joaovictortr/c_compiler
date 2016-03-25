@@ -35,7 +35,7 @@ void LexAnalyzer::compileRules()
   string sExpr_art = "("+sNum+"|"+sId+")" + sOP_art + "("+sNum+"|"+sId+")";
   string sVar = sType+"\\s"+sId;
   string sAttribution = "("+sId+"="+sNum+";)|("+sId+"="+sId+";)|("+sId+"="+sChar+";)|("+sId+"="+sString+";)|("+sId+"="+sExpr_art+";)";
-  string sIncrement = "("+sId+"++\\))|("sId+"++;)|("sId+"--\\))|("sId+"--;))"
+  string sIncrement = "("+sId+"++\\))|("+sId+"++;)|("+sId+"--\\))|("+sId+"--;))";
 
   //Regular Expressions
   boost::regex tipo (sType);
