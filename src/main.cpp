@@ -1,6 +1,6 @@
 #include <iostream>
+#include <fstream>
 #include <string>
-#include "IOHandler.h"
 #include "LexAnalyzer.h"
 
 using namespace std;
@@ -34,18 +34,27 @@ int main(int argc, char *argv[]) {
     const string input_fname = string(argv[1]);
     const string output_fname = string(argv[2]);
 
-    /*
-    try {
-    */
+    // open input stream
+    fstream input(input_fname);
+    if (input.fail()) {  /* Check if failbit is set */
+        cerr << "Failed to open input source file '" << input_fname << "'" << endl;
+        return 1;
+    }
 
-    IOHandler input(input_fname),
-              output(output_fname);
+    // open output stream
+    fstream output(output_fname, std::fstream::out);
+    if (output.fail()) {  /* Check if failbit is set */
+        cerr << "Failed to open output file '" << output_fname << "'" << endl;
+        return 1;
+    }
 
+    vector<string> rules = { "(float|int|const|string|char)" };
     LexAnalyzer lex = LexAnalyzer(input);
 
     string token;
     while(lex.getToken(token)) {
-        output.append(token);
+        //output.append(token);
+        cout << "Token = " << token << endl;
     }
 
     /*
