@@ -29,32 +29,24 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input)
     const string sIncrement = "("+sId+"++\\))|("+sId+"++;)|("+sId+"--\\))|("+sId+"--;))";
 
     rules_ = {
-        { "Type", boost::regex("(float|int|const|string|char)") },
-        { "sLetter", boost::regex("[A-Z]|[a-z]") },
-        { "sDigit", boost::regex("[0-9]") },
-        { "sDigits", boost::regex("[0-9]+") }, //at least one
-        { "sId", boost::regex(sLetter+"("+sLetter+"|"+sDigit+")*") } //id = letra(letra|digito)*
-        /*
-        string sNum = sDigits+"\\."+sDigits;
-        string sDelim = "(\\s|\\t|\\n)"; //delim = espaco|tab|quebra_linha
-        string sChar = "\'"+sLetter+"\'"; // char = 'letra'
-        string sString = "\"(" +sLetter+ "|" +sDigit+ "|" +"\\s)*\""; //string = "[letra|digito|espaco]*"
-        string sOP_log = "(&&|\\|\\|)"; //oper_log = &&| ||
-        string sOP_rel = "(!=|==|<=|>=|>|<)";
-        string sOP_art = "(+|-|*|%|/|#)";
-        string sExpr = "("+sNum+"|"+sId+")" + "("+sOP_log+"|"+sOP_rel+")" + "("+sNum+"|"+sId+")";
-        string sExpr_art = "("+sNum+"|"+sId+")" + sOP_art + "("+sNum+"|"+sId+")";
-        string sVar = sType+"\\s"+sId;
-        string sAttribution = "("+sId+"="+sNum+";)|("+sId+"="+sId+";)|("+sId+"="+sChar+";)|("+sId+"="+sString+";)|("+sId+"="+sExpr_art+";)";
-        string sIncrement = "("+sId+"++\\))|("+sId+"++;)|("+sId+"--\\))|("+sId+"--;))";
-        */
+        { "Type",         boost::regex(sType) },
+        { "sLetter",      boost::regex(sLetter) },
+        { "sDigit",       boost::regex(sDigit) },
+        { "sDigits",      boost::regex(sDigits) }, //at least one
+        { "sId",          boost::regex(sId) }, //id = letra(letra|digito)*
+        { "sNum",         boost::regex(sNum) },
+        { "sDelim",       boost::regex(sDelim) },
+        { "sChar",        boost::regex(sChar) },
+        { "sString",      boost::regex(sString) },
+        { "sOP_log",      boost::regex(sOP_log) },
+        { "sOP_rel",      boost::regex(sOP_rel) },
+        { "sOP_art",      boost::regex(sOP_art) },
+        { "sExpr",        boost::regex(sExpr) },
+        { "sExpr_art",    boost::regex(sExpr_art) },
+        { "sVar",         boost::regex(sVar) },
+        { "sAttribution", boost::regex(sAttribution) },
+        { "sIncrement",   boost::regex(sIncrement) }
     };
-    /*
-    for(auto it = rulesList.begin(); it != rulesList.end(); ++it) {
-        boost::regex rule = boost::regex(*it);
-        rules_.push_back(rule);
-    }
-    */
 }
 
 bool LexAnalyzer::getToken(string& tokenDst)

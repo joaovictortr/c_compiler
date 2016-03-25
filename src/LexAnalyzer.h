@@ -4,6 +4,8 @@
 #include <fstream>
 #include <boost/regex.hpp>
 
+using namespace std;
+
 class LexAnalyzer {
 public:
     LexAnalyzer(fstream& input);
