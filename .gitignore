@@ -1,0 +1,3 @@
+bin/*
+GCC/*.o
+GCCdebug/*.o
