@@ -1,18 +1,90 @@
+#include <iostream>
+#include <cstdlib>
 #include <string>
+#include <list>
 #include <boost/regex.hpp>
 #include "LexAnalyzer.h"
 
 using namespace std;
 
-LexAnalyzer::LexAnalyzer(IOHandler& input)
+LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input)
 {
+    /* Define rules */
+    const string sType = "(float|int|const|string|char)";
+    const string sLetter = "[A-Z]|[a-z]";
+    const string sDigit = "[0-9]";
+    const string sDigits = "[0-9]+"; //at least one
+    const string sId = sLetter+"("+sLetter+"|"+sDigit+")*"; //id = letra(letra|digito)*
+    const string sNum = sDigits+"\\."+sDigits;
+    const string sDelim = "(\\s|\\t|\\n)"; //delim = espaco|tab|quebra_linha
+    const string sChar = "\'"+sLetter+"\'"; // char = 'letra'
+    const string sString = "\"(" +sLetter+ "|" +sDigit+ "|" +"\\s)*\""; //string = "[letra|digito|espaco]*"
+    const string sOP_log = "(&&|\\|\\|)"; //oper_log = &&| ||
+    const string sOP_rel = "(!=|==|<=|>=|>|<)";
+    const string sOP_art = "(+|-|*|%|/|#)";
+    const string sExpr = "("+sNum+"|"+sId+")" + "("+sOP_log+"|"+sOP_rel+")" + "("+sNum+"|"+sId+")";
+    const string sExpr_art = "("+sNum+"|"+sId+")" + sOP_art + "("+sNum+"|"+sId+")";
+    const string sVar = sType+"\\s"+sId;
+    const string sAttribution = "("+sId+"="+sNum+";)|("+sId+"="+sId+";)|("+sId+"="+sChar+";)|("+sId+"="+sString+";)|("+sId+"="+sExpr_art+";)";
+    const string sIncrement = "("+sId+"++\\))|("+sId+"++;)|("+sId+"--\\))|("+sId+"--;))";
+
+    rules_ = {
+        { "Type", boost::regex("(float|int|const|string|char)") },
+        { "sLetter", boost::regex("[A-Z]|[a-z]") },
+        { "sDigit", boost::regex("[0-9]") },
+        { "sDigits", boost::regex("[0-9]+") }, //at least one
+        { "sId", boost::regex(sLetter+"("+sLetter+"|"+sDigit+")*") } //id = letra(letra|digito)*
+        /*
+        string sNum = sDigits+"\\."+sDigits;
+        string sDelim = "(\\s|\\t|\\n)"; //delim = espaco|tab|quebra_linha
+        string sChar = "\'"+sLetter+"\'"; // char = 'letra'
+        string sString = "\"(" +sLetter+ "|" +sDigit+ "|" +"\\s)*\""; //string = "[letra|digito|espaco]*"
+        string sOP_log = "(&&|\\|\\|)"; //oper_log = &&| ||
+        string sOP_rel = "(!=|==|<=|>=|>|<)";
+        string sOP_art = "(+|-|*|%|/|#)";
+        string sExpr = "("+sNum+"|"+sId+")" + "("+sOP_log+"|"+sOP_rel+")" + "("+sNum+"|"+sId+")";
+        string sExpr_art = "("+sNum+"|"+sId+")" + sOP_art + "("+sNum+"|"+sId+")";
+        string sVar = sType+"\\s"+sId;
+        string sAttribution = "("+sId+"="+sNum+";)|("+sId+"="+sId+";)|("+sId+"="+sChar+";)|("+sId+"="+sString+";)|("+sId+"="+sExpr_art+";)";
+        string sIncrement = "("+sId+"++\\))|("+sId+"++;)|("+sId+"--\\))|("+sId+"--;))";
+        */
+    };
+    /*
+    for(auto it = rulesList.begin(); it != rulesList.end(); ++it) {
+        boost::regex rule = boost::regex(*it);
+        rules_.push_back(rule);
+    }
+    */
 }
 
 bool LexAnalyzer::getToken(string& tokenDst)
 {
+    /*
+    int line_pos = 0;
+    while(1) {
+        if (curLine_.empty()) {
+            if (!getline(inStream_, curLine_)) {
+                return false;
+            }
+        }
+
+        bool isString = false,
+             isComment = false,
+             foundChar = false;
+
+        do {
+            if (curLine_[position] != " ")
+                foundChar = true;
+        } while(!isString && !isComment && !foundChar);
+
+
+    }
+    */
+    return true;
 }
 
-void LexAnalyzer::compileRules()
+/*
+void LexAnalyzer::compileRules(vector<string>& rulesList)
 {
   // Setup step
   //
@@ -54,3 +126,4 @@ void LexAnalyzer::compileRules()
   boost::regex atribuicao (sAttribution);
   boost::regex incremento (sIncrement);
 }
+*/
