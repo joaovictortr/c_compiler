@@ -49,29 +49,75 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input)
     };
 }
 
+/**
+ * Obtem um token da entrada
+ *
+ * @param tokenDst token para o qual a saida sera escrita
+ * @return true se ainda tem entrada, false caso contrario
+ */
 bool LexAnalyzer::getToken(string& tokenDst)
 {
-    int line_pos = 0;
-    while(1) {
-        if (curLine_.empty()) {
-            if (!getline(inStream_, curLine_)) {
+    /* pula espacos em branco, tabs e quebra de linha */
+    bool stopRead = false; // flag para parar a leitura da entrada
+    bool isComment = false; // flag para lidar com comentarios
+    while(!stopRead) {
+        if (lineBuffer_.empty()) { // le nova linha se buffer de linha esta vazio
+            if(!getline(inStream_, lineBuffer_)) {
+                // fim da entrada, devolve false
                 return false;
             }
         }
 
-        bool isString = false,
-             isComment = false,
-             foundChar = false;
+        // cria iterador sobre buffer de linha aqui para manter o escopo
+        // na chamada da funcao erase logo depois do laco.
+        auto lb_iter = lineBuffer_.begin();
+        for(; lb_iter != lineBuffer_.end(); ++lb_iter) {
+            const char ch = *lb_iter;
+            if ( ch == '\n' ) { // achou '\n', incrementa contador de linhas
+                ++lineCount_;
+            } else if (ch != '\t' && ch != ' ') {
+                // para de ler da entrada
+                stopRead = true;
+                if (!isComment)
+                    break;
+            } else if (ch == '/') { // verifica comentario do tipo '//'
+                if (peekBuffer_.empty()) { // guarda '/' e seta flag de comentario
+                    peekBuffer_.append("/");
+                    isComment = true;
+                } else if (peekBuffer_ == "/") {
+                    // achou comentario de linha, mantem flag ligada e seta
+                    // iterador para o final da string
+                    lb_iter = lineBuffer_.end();
 
-        do {
-            if (curLine_[position] != " ")
-                foundChar = true;
-        } while(!isString && !isComment && !foundChar);
-
-
+                    // esvazia buffer de peeking
+                    peekBuffer_.clear();
+                }
+            }
+        }
+        // apaga caracteres ja lidos do buffer de linha
+        lineBuffer_.erase(lineBuffer_.begin(), lb_iter);
     }
 
+    /* lida com numeros */
+    //handleNumbers();
+    /* lida com palavras reservadas */
+    //handleReserved();
+    /* atribui o token */
+
+    /* esvazia o buffer de peeking */
+    peekBuffer_.clear();
     return true;
+}
+
+/**
+ * Verifica se uma string e palavra reservada
+ *
+ * @param word string a ser verificada
+ * @return true se string for palavra reservada, false caso contrario.
+ */
+bool LexAnalyzer::isReserved(string & word)
+{
+    return rsvWords_.find(word) == rsvWords_.end();
 }
 
 /*
