@@ -60,10 +60,14 @@ bool LexAnalyzer::getToken(string& tokenDst)
     /* pula espacos em branco, tabs e quebra de linha */
     bool stopRead = false; // flag para parar a leitura da entrada
     bool isComment = false; // flag para lidar com comentarios
+    bool isCommentMulti = false; // flag para lidar com comentarios multilinha
     while(!stopRead) {
         if (lineBuffer_.empty()) { // le nova linha se buffer de linha esta vazio
             if(!getline(inStream_, lineBuffer_)) {
-                // fim da entrada, devolve false
+                if (cin.bad()) {
+                    cerr << "Erro de IO!" << endl;
+                }
+                // fim da entrada (ou erro), devolve false
                 return false;
             }
         }
@@ -73,39 +77,74 @@ bool LexAnalyzer::getToken(string& tokenDst)
         auto lb_iter = lineBuffer_.begin();
         for(; lb_iter != lineBuffer_.end(); ++lb_iter) {
             const char ch = *lb_iter;
-            if ( ch == '\n' ) { // achou '\n', incrementa contador de linhas
+            if (ch == '\n') { // achou '\n', incrementa contador de linhas
                 ++lineCount_;
-            } else if (ch != '\t' && ch != ' ') {
-                // para de ler da entrada
-                stopRead = true;
-                if (!isComment)
-                    break;
-            } else if (ch == '/') { // verifica comentario do tipo '//'
-                if (peekBuffer_.empty()) { // guarda '/' e seta flag de comentario
+            } else if (ch == '/') {
+                if (peekBuffer_.empty()) {
+                    // buffer de peeking vazio, guarda '/' e seta flag de comentario
                     peekBuffer_.append("/");
                     isComment = true;
                 } else if (peekBuffer_ == "/") {
-                    // achou comentario de linha, mantem flag ligada e seta
-                    // iterador para o final da string
-                    lb_iter = lineBuffer_.end();
-
+                    if (ch == '*') {
+                        // liga flag de comentario multilinha
+                        isCommentMulti = true;
+                        // esvazia buffer de peeking
+                        peekBuffer_.clear();
+                    } else if (ch == '/') {
+                        // achou comentario de linha, desliga flag e aponta
+                        // iterador para o final da string
+                        isComment = false;
+                        lb_iter = lineBuffer_.end() - 1;
+                        // esvazia buffer de peeking
+                        peekBuffer_.clear();
+                    }
+                } else if (peekBuffer_ == "*") {
+                    // achou '*/', desliga flag de comentario multilinha
+                    isCommentMulti = false;
                     // esvazia buffer de peeking
                     peekBuffer_.clear();
                 }
+            } else if (ch == '*' && isCommentMulti) {
+                // achou '*' que pode ser de final de comentario,
+                // guarda '*'
+                peekBuffer_.append("*");
+            } else if (ch != '\t' && ch != ' ') {
+                stopRead = true;
+                if (!isComment)
+                    break;
             }
         }
         // apaga caracteres ja lidos do buffer de linha
         lineBuffer_.erase(lineBuffer_.begin(), lb_iter);
     }
 
+    if (isCommentMulti) {
+        // comentario multilinha nao fechado, erro lexico
+        cerr << "[linha " << getLine() << "] Erro léxico: comentário não fechado!" << endl;
+        exit(1);
+    }
+
+    auto lb_iter = lineBuffer_.begin();
+    for(; lb_iter != lineBuffer_.end(); ++lb_iter) {
+        const char ch = *lb_iter;
+        // verifica se caracter nao e espaco, tab, quebra de linha ou vazio
+        if (ch == ' ' || ch == '\t' || ch == '\n')
+            break;
+        // adiciona caracter ao buffer de peeking
+        peekBuffer_ += ch;
+    }
+    // apaga caracteres lidos do buffer de linha
+    lineBuffer_.erase(lineBuffer_.begin(), lb_iter);
+
     /* lida com numeros */
     //handleNumbers();
     /* lida com palavras reservadas */
     //handleReserved();
     /* atribui o token */
-
     /* esvazia o buffer de peeking */
+    tokenDst = peekBuffer_;
     peekBuffer_.clear();
+
     return true;
 }
 
@@ -118,6 +157,11 @@ bool LexAnalyzer::getToken(string& tokenDst)
 bool LexAnalyzer::isReserved(string & word)
 {
     return rsvWords_.find(word) == rsvWords_.end();
+}
+
+size_t LexAnalyzer::getLine() const
+{
+    return lineCount_;
 }
 
 /*

@@ -14,17 +14,6 @@ void usage(string& filename)
 }
 
 int main(int argc, char *argv[]) {
-    /**
-    string text="f";
-
-    boost::regex letra("[A-Z]|[a-z]");
-
-    if (boost::regex_match (text, letra) )
-        cout << "string literal matched\n";
-    else
-        cout << "none";
-     */
-
     if (argc < 3) {
         string filename = string(argv[0]);
         usage(filename);
@@ -56,13 +45,6 @@ int main(int argc, char *argv[]) {
         //output.append(token);
         cout << "Token = " << token << endl;
     }
-
-    /*
-    } catch(LexicalError &e) {
-    } catch(IOError &e) {
-    }
-    */
-
 
     return 0;
 }

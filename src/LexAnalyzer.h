@@ -26,4 +26,5 @@ private:
     void compileRules();
 
     bool isReserved(string & word);
+    size_t getLine() const;
 };
