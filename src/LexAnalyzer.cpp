@@ -30,6 +30,14 @@ bool LexAnalyzer::getToken(Token& token)
             continue;
         else if (peek == '\n') { ++lineCount_; continue; }
 
+        switch(peek) {
+            case '=':
+                string s("equal");
+                token = Word(Tag::EQ, s);
+                return true;
+                break;
+        }
+
         if (peek == '/') {
             if(!inStream_.get(peek)) return false;
             bool stopScan = false;
@@ -69,7 +77,8 @@ bool LexAnalyzer::getToken(Token& token)
                     // coloca caracter de volta na stream
                     inStream_.putback(peek);
                     // TODO: devolve token de divisão '/'
-                    token = Token(peek);
+                    string s("intdiv");
+                    token = Word(Tag::INT_DIV, s);
                     return true;
             }
         }
@@ -83,6 +92,7 @@ bool LexAnalyzer::getToken(Token& token)
                 v = 10 * v + atoi(s.c_str());
                 if (!inStream_.get(peek)) break;
             } while(isdigit(peek));
+            inStream_.putback(peek);
             token = Num(v);
             return true;
         }
@@ -93,8 +103,12 @@ bool LexAnalyzer::getToken(Token& token)
                 word += peek;
                 if (!inStream_.get(peek)) break;
             } while(isalpha(peek));
+            inStream_.putback(peek);
 
-            token = getWord(Tag::ID, word);
+            if (isReserved(word))
+                token = words_[word];
+            else
+                token = getWord(Tag::ID, word);
             return true;
         }
 
@@ -114,7 +128,7 @@ bool LexAnalyzer::getToken(Token& token)
  */
 bool LexAnalyzer::isReserved(string & word)
 {
-    return words_.find(word) == words_.end();
+    return words_.find(word) != words_.end();
 }
 
 Word & LexAnalyzer::getWord(int tag, string& lexeme)
