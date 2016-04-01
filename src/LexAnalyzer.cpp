@@ -31,11 +31,31 @@ bool LexAnalyzer::getToken(Token& token)
         else if (peek == '\n') { ++lineCount_; continue; }
 
         switch(peek) {
-            case '=':
+            case '=':  // TODO: adicionar verificacao para '=='
                 string s("equal");
-                token = Word(Tag::EQ, s);
+                token = Word(Tag::ATTR, s);
                 return true;
                 break;
+            /*
+            case '>':
+                break;
+            case '<':
+                break;
+            case '&':
+                break;
+            case '"':
+                break;
+            case '#':
+                break;
+            case '%':
+                break;
+            case '*':
+                break;
+            case '!':
+                break;
+            case '|':
+                break;
+            */
         }
 
         if (peek == '/') {
@@ -51,9 +71,6 @@ bool LexAnalyzer::getToken(Token& token)
                 case '*':  // trata comentario de uma ou mais linhas
                     do {
                         switch(peek) {
-                            case '\n':
-                                ++lineCount_;
-                                break;
                             case '*':
                                 if(!inStream_.get(peek)) {
                                     cerr << "[linha " << getLine() << "] Erro léxico: comentário não fechado!" << endl;
@@ -76,7 +93,6 @@ bool LexAnalyzer::getToken(Token& token)
                 default:
                     // coloca caracter de volta na stream
                     inStream_.putback(peek);
-                    // TODO: devolve token de divisão '/'
                     string s("intdiv");
                     token = Word(Tag::INT_DIV, s);
                     return true;
