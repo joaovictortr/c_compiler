@@ -45,6 +45,5 @@ int main(int argc, char *argv[]) {
         //output.append(token);
         cout << "Token ID = " << token.getTag() << " | Token = '" << Tag::tag2Str(token.getTag()) << "'" << endl;
     }
-
     return 0;
 }

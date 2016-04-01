@@ -104,44 +104,23 @@ bool LexAnalyzer::getToken(Token& token)
         return true;
     }
     return false;
-
-    /*
-
-    }
-    return false;
-    */
 }
 
-Word& LexAnalyzer::getWord(int tag, string& s)
+/**
+ * Verifica se uma string e palavra reservada
+ *
+ * @param word string a ser verificada
+ * @return true se string for palavra reservada, false caso contrario.
+ */
+bool LexAnalyzer::isReserved(string & word)
 {
-    Word w = Word(tag, s);
-    words_.insert({ s, w });
-    return words_[s];
+    return words_.find(word) == words_.end();
 }
 
-bool LexAnalyzer::readLine()
+Word & LexAnalyzer::getWord(int tag, string& lexeme)
 {
-    if (lineBuf_.empty()) {
-        if (!getline(inStream_, lineBuf_)) {
-            if (inStream_.bad()) {
-                cerr << "IO error!" << endl;
-                exit(1);
-            }
-            // fim de arquivo, devolve false
-            return false;
-        }
-        // incrementa contador de linha
-        ++lineCount_;
-    }
-    return true;
-}
-
-bool LexAnalyzer::readChar(char & c, string & buffer, string::iterator & it)
-{
-    if (it != buffer.end()) {
-        c = *it;
-        ++it;
-        return true;
-    }
-    return false;
+    Word word = Word(tag, lexeme);
+    auto ret = words_.insert({ lexeme, word });
+    auto item = ret.first; // iterador sobre o par no map
+    return (*item).second;
 }

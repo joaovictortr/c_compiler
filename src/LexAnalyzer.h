@@ -2,6 +2,7 @@
 
 #include <string>
 #include <fstream>
+#include <map>
 #include "Tag.h"
 #include "Token.h"
 #include "Num.h"
@@ -19,6 +20,7 @@ private:
     void reserve(Word & w) { getWord(w.getTag(), w.getLexeme()); }
     bool readLine();
     bool readChar(char & c, string & buffer, string::iterator & it);
+    bool isReserved(string & word);
 
     fstream& inStream_;
     size_t lineCount_;
