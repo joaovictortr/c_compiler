@@ -18,22 +18,22 @@ public:
     static string tag2Str(int tag) {
         switch(tag) {
             case NUM:
-                return "Numero";
+                return "NUM";
                 break;
             case ID:
                 return "ID";
                 break;
             case TRUE:
-                return "True";
+                return "TRUE";
                 break;
             case FALSE:
-                return "False";
+                return "FALSE";
                 break;
             case INT_DIV:
                 return "/";
                 break;
             case EQ:
-                return "Equal";
+                return "EQ";
                 break;
             default:
                 string s;
