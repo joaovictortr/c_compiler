@@ -2,19 +2,26 @@
 
 #include <string>
 #include <fstream>
-#include <boost/regex.hpp>
+#include "Tag.h"
+#include "Token.h"
+#include "Num.h"
+#include "Word.h"
 
 using namespace std;
 
 class LexAnalyzer {
 public:
     LexAnalyzer(fstream& input);
-    bool getToken(string& tokenDst);
+    bool getToken(Token& tokenDst);
+    size_t getLine() const { return lineCount_; }
 private:
-    fstream& inStream_;
-    map<string, boost::regex> rules_;
-    map<string, int> flags_;
-    string curLine_;
+    Word & getWord(int tag, string& word);
+    void reserve(Word & w) { getWord(w.getTag(), w.getLexeme()); }
+    bool readLine();
+    bool readChar(char & c, string & buffer, string::iterator & it);
 
-    void compileRules();
+    fstream& inStream_;
+    size_t lineCount_;
+    string lineBuf_;
+    map<string, Word> words_;
 };

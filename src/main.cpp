@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include "LexAnalyzer.h"
 
 using namespace std;
@@ -14,17 +15,6 @@ void usage(string& filename)
 }
 
 int main(int argc, char *argv[]) {
-    /**
-    string text="f";
-
-    boost::regex letra("[A-Z]|[a-z]");
-
-    if (boost::regex_match (text, letra) )
-        cout << "string literal matched\n";
-    else
-        cout << "none";
-     */
-
     if (argc < 3) {
         string filename = string(argv[0]);
         usage(filename);
@@ -42,27 +32,19 @@ int main(int argc, char *argv[]) {
     }
 
     // open output stream
-    fstream output(output_fname, std::fstream::out);
+    fstream output(output_fname);
     if (output.fail()) {  /* Check if failbit is set */
         cerr << "Failed to open output file '" << output_fname << "'" << endl;
         return 1;
     }
 
-    vector<string> rules = { "(float|int|const|string|char)" };
     LexAnalyzer lex = LexAnalyzer(input);
 
-    string token;
+    Token token;
     while(lex.getToken(token)) {
         //output.append(token);
-        cout << "Token = " << token << endl;
+        cout << "Token ID = " << token.getTag() << " | Token = '" << Tag::tag2Str(token.getTag()) << "'" << endl;
     }
-
-    /*
-    } catch(LexicalError &e) {
-    } catch(IOError &e) {
-    }
-    */
-
 
     return 0;
 }
