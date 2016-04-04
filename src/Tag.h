@@ -84,6 +84,8 @@ public:
                 return "ARTOP_MINUS"; break;
             case ARTOP_MOD:
                 return "ARTOP_MOD"; break;
+            case ARTOP_MULT:
+                return "ARTOP_MULT"; break;
             default:
                 string s;
                 s += static_cast<char>(tag);
