@@ -8,33 +8,81 @@ using namespace std;
 
 class Tag {
 public:
-    static const int NUM = 256;
-    static const int ID = 257;
-    static const int TRUE = 258;
-    static const int FALSE = 259;
-    static const int ATTR = 260;
-    static const int INT_DIV = 261;
+    static const int NUM_INT = 256; // literal numerico (numero inteiro), ex. 40
+    static const int NUM_REAL = 257; // literal numerico (numero real), ex. 26.5
+    static const int STRING = 258; // string
+    static const int ID = 259; // identificador
+    static const int OP_ASSIGN = 260; // atribuição
+    // operadores lógicos
+    static const int LOGOP_AND = 261; // &&
+    static const int LOGOP_OR = 262; // ||
+    // operadores relacionais
+    static const int RELOP_EQ = 263;  // ==
+    static const int RELOP_NEQ = 264; // !=
+    static const int RELOP_BGT = 265; // >
+    static const int RELOP_SLT = 266; // <
+    static const int RELOP_BGT_EQ = 267; // >=
+    static const int RELOP_SLT_EQ = 268; // <=
+    // incrementos
+    static const int INCOP_PLUS = 269; // id++
+    static const int INCOP_MINUS = 270; // id--
+    // operadores aritméticos
+    static const int ARTOP_DIV_INT = 271; // /
+    static const int ARTOP_DIV_REAL = 272; // #
+    static const int ARTOP_PLUS = 273; // +
+    static const int ARTOP_MINUS = 274; // -
+    static const int ARTOP_MOD = 275; // %
+    // comandos
+    static const int FOR = 276;
+    static const int WHILE = 277;
+    static const int IF = 278;
+    static const int ELSE = 279;
 
     static string tag2Str(int tag) {
         switch(tag) {
-            case NUM:
-                return "NUM";
-                break;
+            case NUM_INT:
+                return "NUM_INT"; break;
+            case NUM_REAL:
+                return "NUM_REAL"; break;
+            case STRING:
+                return "STRING"; break;
             case ID:
-                return "ID";
-                break;
-            case TRUE:
-                return "TRUE";
-                break;
-            case FALSE:
-                return "FALSE";
-                break;
-            case INT_DIV:
-                return "/";
-                break;
-            case ATTR:
-                return "ATTR";
-                break;
+                return "ID"; break;
+            case OP_ASSIGN:
+                return "OP_ASSIGN"; break;
+            /* operadores lógicos */
+            case LOGOP_AND:
+                return "LOGOP_AND"; break;
+            case LOGOP_OR:
+                return "LOGOP_OR"; break;
+            /* operadores relacionais */
+            case RELOP_EQ:
+                return "RELOP_EQ"; break;
+            case RELOP_NEQ:
+                return "RELOP_NEQ"; break;
+            case RELOP_BGT:
+                return "RELOP_BGT"; break;
+            case RELOP_SLT:
+                return "RELOP_SLT"; break;
+            case RELOP_BGT_EQ:
+                return "RELOP_BGT_EQ"; break;
+            case RELOP_SLT_EQ:
+                return "RELOP_SLT_EQ"; break;
+            case INCOP_PLUS:
+                return "INCOP_PLUS"; break;
+            case INCOP_MINUS:
+                return "INCOP_MINUS"; break;
+            /* operadores aritméticos */
+            case ARTOP_DIV_INT:
+                return "ARTOP_DIV_INT"; break;
+            case ARTOP_DIV_REAL:
+                return "ARTOP_DIV_REAL"; break;
+            case ARTOP_PLUS:
+                return "ARTOP_PLUS"; break;
+            case ARTOP_MINUS:
+                return "ARTOP_MINUS"; break;
+            case ARTOP_MOD:
+                return "ARTOP_MOD"; break;
             default:
                 string s;
                 s += static_cast<char>(tag);

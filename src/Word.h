@@ -8,7 +8,7 @@ using namespace std;
 class Word : public Token {
 public:
     Word() = default;
-    Word(int type, string & word) : type_(type), lexeme_(word) { setTag(type); }
+    Word(int type, string word) : type_(type), lexeme_(word) { setTag(type); }
     string& getLexeme() { return lexeme_; }
     const string& getLexeme() const { return lexeme_; }
     Word& operator=(const Word& other) {

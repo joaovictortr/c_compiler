@@ -5,7 +5,7 @@
 #include <map>
 #include "Tag.h"
 #include "Token.h"
-#include "Num.h"
+#include "NumInt.h"
 #include "Word.h"
 
 using namespace std;
