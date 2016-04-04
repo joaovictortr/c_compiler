@@ -51,22 +51,21 @@ bool LexAnalyzer::getToken(Token& token)
                     break;
                 case '*':  // trata comentario de uma ou mais linhas
                     do {
-                        switch(peek) {
-                            case '*':
-                                if(!inStream_.get(peek)) {
-                                    erroLexico("Comentário não fechado!");
-                                }
-                                if (peek == '/') {
-                                    stopScan = true;
-                                }
-                                break;
+                        if (peek == '*') {
+                            if(!inStream_.get(peek)) { erroLexico("Comentário não fechado!"); }
+                            if (peek == '/') { stopScan = true; }
                         }
+
+                        if (peek == '\n')
+                            ++lineCount_;
+
                     } while(inStream_.get(peek) && !stopScan);
-                    // coloca ultimo caracter lido de volta na stream
-                    inStream_.putback(peek);
-                    if (inStream_.eof()) {
+
+                    if (!stopScan) { // nao encontrou '*/'
                         erroLexico("Comentário não fechado!");
                     }
+                    // coloca ultimo caracter lido de volta na stream
+                    inStream_.putback(peek);
                     continue;
                     break;
                 default:
@@ -243,7 +242,7 @@ Word & LexAnalyzer::getWord(int tag, string& lexeme)
     return (*item).second;
 }
 
-inline void LexAnalyzer::erroLexico(string s) {
+void LexAnalyzer::erroLexico(string s) {
     cerr << "[linha " << getLine() << "] Erro léxico: " << s << endl;
     exit(1);
 }
