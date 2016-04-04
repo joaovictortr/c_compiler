@@ -1,0 +1,14 @@
+- Tabela de símbolos
+    - adicionar tabela de símbolos
+    - popular a tabela de símbolos com nome de identificadores
+
+- Implementar:
+    - Chamadas de procedimento
+    - operadores de incremento e decremento
+    - números reais
+    - tipos
+    - strings
+
+- Tokens
+    - Obter nome dos identificadores e tipos
+    - Ajustar formato de saída para <tipo_token, valor_token>
