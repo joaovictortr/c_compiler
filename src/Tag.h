@@ -32,6 +32,7 @@ public:
     static const int ARTOP_PLUS = 273; // +
     static const int ARTOP_MINUS = 274; // -
     static const int ARTOP_MOD = 275; // %
+    static const int ARTOP_MULT = 276; // *
     // comandos
     static const int FOR = 276;
     static const int WHILE = 277;

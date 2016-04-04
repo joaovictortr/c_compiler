@@ -2,10 +2,11 @@
 #include <cstdlib>
 #include <string>
 #include <list>
+#include <map>
 #include <boost/regex.hpp>
 #include "Tag.h"
 #include "Token.h"
-#include "Num.h"
+#include "NumInt.h"
 #include "Word.h"
 #include "LexAnalyzer.h"
 
@@ -13,12 +14,19 @@ using namespace std;
 
 LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
 {
-    string t = "true";
-    Word w = Word(Tag::TRUE, t);
-    reserve( w );
-    t = "false";
-    w = Word(Tag::FALSE, t);
-    reserve( w );
+    map< string, int > reserved_words = {
+        { "for", Tag::FOR },
+        { "while", Tag::WHILE },
+        { "if", Tag::IF },
+        { "else", Tag::ELSE }
+    };
+
+    for(auto it = reserved_words.begin(); it != reserved_words.end(); ++it) {
+        Word w;
+        w = Word(it->second, it->first);
+        reserve( w );
+    }
+
 }
 
 bool LexAnalyzer::getToken(Token& token)
@@ -30,34 +38,7 @@ bool LexAnalyzer::getToken(Token& token)
             continue;
         else if (peek == '\n') { ++lineCount_; continue; }
 
-        switch(peek) {
-            case '=':  // TODO: adicionar verificacao para '=='
-                string s("equal");
-                token = Word(Tag::ATTR, s);
-                return true;
-                break;
-            /*
-            case '>':
-                break;
-            case '<':
-                break;
-            case '&':
-                break;
-            case '"':
-                break;
-            case '#':
-                break;
-            case '%':
-                break;
-            case '*':
-                break;
-            case '!':
-                break;
-            case '|':
-                break;
-            */
-        }
-
+        // remove comentários
         if (peek == '/') {
             if(!inStream_.get(peek)) return false;
             bool stopScan = false;
@@ -73,8 +54,7 @@ bool LexAnalyzer::getToken(Token& token)
                         switch(peek) {
                             case '*':
                                 if(!inStream_.get(peek)) {
-                                    cerr << "[linha " << getLine() << "] Erro léxico: comentário não fechado!" << endl;
-                                    exit(1);
+                                    erroLexico("Comentário não fechado!");
                                 }
                                 if (peek == '/') {
                                     stopScan = true;
@@ -85,18 +65,126 @@ bool LexAnalyzer::getToken(Token& token)
                     // coloca ultimo caracter lido de volta na stream
                     inStream_.putback(peek);
                     if (inStream_.eof()) {
-                        cerr << "[linha " << getLine() << "] Erro léxico: comentário não fechado!" << endl;
-                        exit(1);
+                        erroLexico("Comentário não fechado!");
                     }
                     continue;
                     break;
                 default:
                     // coloca caracter de volta na stream
                     inStream_.putback(peek);
-                    string s("intdiv");
-                    token = Word(Tag::INT_DIV, s);
+                    // cria token operador de divisão por inteiro
+                    token = Word(Tag::ARTOP_DIV_INT, Tag::tag2Str(Tag::ARTOP_DIV_INT));
                     return true;
             }
+        }
+
+        // processamento dos operadores
+        switch(peek) {
+            /**
+             * operadores relacionais
+             */
+            case '=':
+                if (!inStream_.get(peek)) return false;
+
+                if (peek == '=') {  // encontrou '=='
+                    // cria token para operador de igualdade
+                    token = Word(Tag::RELOP_EQ, Tag::tag2Str(Tag::RELOP_EQ));
+                } else { // atribuição
+                    // coloca caracter lido de volta no buffer
+                    inStream_.putback(peek);
+                    // cria token de atribuição
+                    token = Word(Tag::OP_ASSIGN, Tag::tag2Str(Tag::OP_ASSIGN));
+                }
+                return true;
+                break;
+            case '!':
+                if (!inStream_.get(peek))
+                    erroLexico("Operador '!' não suportado!");
+                if (peek == '=') {  // encontrou '!='
+                    token = Word(Tag::RELOP_NEQ, Tag::tag2Str(Tag::RELOP_NEQ));
+                    return true;
+                } else {
+                    erroLexico("Operador '!' não suportado!");
+                }
+                break;
+            case '>':
+                if (!inStream_.get(peek)) return false;
+
+                if (peek == '=') {  // encontrou '>='
+                    // cria token de maior ou igual
+                    token = Word(Tag::RELOP_BGT_EQ, Tag::tag2Str(Tag::RELOP_BGT_EQ));
+                } else { // operador '>'
+                    // coloca caracter lido de volta no buffer
+                    inStream_.putback(peek);
+                    // cria token de maior
+                    token = Word(Tag::RELOP_BGT, Tag::tag2Str(Tag::RELOP_BGT));
+                }
+                return true;
+                break;
+            case '<':
+                if (!inStream_.get(peek)) return false;
+                    // cria token com operador menor
+                if (peek == '=') {  // encontrou '<='
+                    token = Word(Tag::RELOP_SLT_EQ, Tag::tag2Str(Tag::RELOP_SLT_EQ));
+                } else { // operador '<'
+                    // coloca caracter lido de volta no buffer
+                    inStream_.putback(peek);
+                    // cria token de menor
+                    token = Word(Tag::RELOP_SLT, Tag::tag2Str(Tag::RELOP_SLT));
+                }
+                return true;
+                break;
+            /**
+             * operadores lógicos
+             */
+            case '&':
+                if (!inStream_.get(peek))
+                    erroLexico("Operador '&' não suportado!");
+                if (peek == '&') {  // encontrou '&&'
+                    token = Word(Tag::LOGOP_AND, Tag::tag2Str(Tag::LOGOP_AND));
+                    return true;
+                } else {
+                    erroLexico("Operador '&' não suportado!");
+                }
+                break;
+            case '|':
+                if (!inStream_.get(peek))
+                    erroLexico("Operador '|' não suportado!");
+                if (peek == '&') {  // encontrou '&&'
+                    token = Word(Tag::LOGOP_OR, Tag::tag2Str(Tag::LOGOP_OR));
+                    return true;
+                } else {
+                    erroLexico("Operador '|' não suportado!");
+                }
+                break;
+            /**
+             * operadores aritméticos
+             */
+            case '#':
+                token = Word(Tag::ARTOP_DIV_REAL, Tag::tag2Str(Tag::ARTOP_DIV_REAL));
+                return true;
+                break;
+            case '+':
+                token = Word(Tag::ARTOP_PLUS, Tag::tag2Str(Tag::ARTOP_PLUS));
+                return true;
+                break;
+            case '-':
+                token = Word(Tag::ARTOP_MINUS, Tag::tag2Str(Tag::ARTOP_MINUS));
+                return true;
+                break;
+            case '%':
+                token = Word(Tag::ARTOP_MOD, Tag::tag2Str(Tag::ARTOP_MOD));
+                return true;
+                break;
+            case '*':
+                token = Word(Tag::ARTOP_MULT, Tag::tag2Str(Tag::ARTOP_MULT));
+                return true;
+                break;
+            /**
+             * outros
+             */
+            case '"':  // string
+                break;
         }
 
         if (isdigit(peek)) {
@@ -109,7 +197,7 @@ bool LexAnalyzer::getToken(Token& token)
                 if (!inStream_.get(peek)) break;
             } while(isdigit(peek));
             inStream_.putback(peek);
-            token = Num(v);
+            token = NumInt(v);
             return true;
         }
 
@@ -153,4 +241,9 @@ Word & LexAnalyzer::getWord(int tag, string& lexeme)
     auto ret = words_.insert({ lexeme, word });
     auto item = ret.first; // iterador sobre o par no map
     return (*item).second;
+}
+
+inline void LexAnalyzer::erroLexico(string s) {
+    cerr << "[linha " << getLine() << "] Erro léxico: " << s << endl;
+    exit(1);
 }

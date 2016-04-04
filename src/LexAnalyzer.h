@@ -21,6 +21,7 @@ private:
     bool readLine();
     bool readChar(char & c, string & buffer, string::iterator & it);
     bool isReserved(string & word);
+    void erroLexico(string s);
 
     fstream& inStream_;
     size_t lineCount_;
