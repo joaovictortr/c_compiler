@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
                 output << lexeme;
                 break;
         }
-        output << ">";
+        output << ">" << endl;
     }
     output << endl;
     input.close();
