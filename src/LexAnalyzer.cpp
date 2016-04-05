@@ -231,7 +231,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     erroLexico("Tipo char pode ter somente um caracter ou caracter não fechado!");
                 } else {
                     strBuf += peek;
-                    token = Word(Tag::CHAR, Tag::tag2Str(Tag::TIPO_CHAR));
+                    token = Word(Tag::CHAR, Tag::tag2Str(Tag::CHAR));
                     lexeme = strBuf;
                     strBuf.clear();
                     return true;
