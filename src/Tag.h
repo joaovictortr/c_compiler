@@ -43,6 +43,7 @@ public:
     static const int TIPO_CHAR = 282;
     static const int TIPO_INT = 283;
     static const int TIPO_FLOAT = 284;
+    static const int TIPO_STRING = 285;
 
     static string tag2Str(int tag) {
         switch(tag) {
@@ -109,6 +110,8 @@ public:
                 return "TIPO_INT"; break;
             case TIPO_FLOAT:
                 return "TIPO_FLOAT"; break;
+            case TIPO_STRING:
+                return "TIPO_STRING"; break;
             default:
                 string s;
                 s += static_cast<char>(tag);

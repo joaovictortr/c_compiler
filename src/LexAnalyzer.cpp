@@ -23,7 +23,8 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
         { "return", Tag::RETURN },
         { "char", Tag::TIPO_CHAR },
         { "int", Tag::TIPO_INT },
-        { "float", Tag::TIPO_FLOAT }
+        { "float", Tag::TIPO_FLOAT },
+        { "string", Tag::TIPO_STRING }
     };
 
     for(auto it = reserved_words.begin(); it != reserved_words.end(); ++it) {
