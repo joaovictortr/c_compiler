@@ -166,10 +166,28 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 return true;
                 break;
             case '+':
+                if (inStream_.get(peek)) {
+                    if (peek == '+') { // encontrou '++', cria operador incremento
+                        token = Word(Tag::INCOP_PLUS, Tag::tag2Str(Tag::INCOP_PLUS));
+                        return true;
+                    } else {
+                        // peek nao eh '+', coloca '+' de volta no buffer
+                        inStream_.putback(peek);
+                    }
+                }
                 token = Word(Tag::ARTOP_PLUS, Tag::tag2Str(Tag::ARTOP_PLUS));
                 return true;
                 break;
             case '-':
+                if (inStream_.get(peek)) {
+                    if (peek == '-') { // encontrou '--', cria operador decremento
+                        token = Word(Tag::INCOP_MINUS, Tag::tag2Str(Tag::INCOP_MINUS));
+                        return true;
+                    } else {
+                        // peek nao eh '-', coloca '+' de volta no buffer
+                        inStream_.putback(peek);
+                    }
+                }
                 token = Word(Tag::ARTOP_MINUS, Tag::tag2Str(Tag::ARTOP_MINUS));
                 return true;
                 break;
@@ -229,6 +247,10 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 if (n_digitos == 0) {
                     erroLexico("Número real inválido!\n");
                 }
+                // ultimo peek lido nao era digito, coloca
+                // peek de volta no buffer
+                inStream_.putback(peek);
+
                 token = NumReal(r);
                 lexeme = to_string(r);
             } else {
