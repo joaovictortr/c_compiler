@@ -57,10 +57,12 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     continue;
                     break;
                 case '*':  // trata comentario de uma ou mais linhas
+		    if(!inStream_.get(peek)) { erroLexico("Comentário não fechado!"); }
                     do {
                         if (peek == '*') {
                             if(!inStream_.get(peek)) { erroLexico("Comentário não fechado!"); }
                             if (peek == '/') { stopScan = true; }
+			    else if (peek == '*') { inStream_.putback(peek); }
                         }
 
                         if (peek == '\n')
@@ -250,6 +252,10 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 if (!inStream_.get(peek)) stop = true;
             } while(isdigit(peek) && !stop);
 
+	    if (isalpha(peek)) { // numero seguido de letra, erro léxico
+		erroLexico("Literal (num. inteiro) seguido de letra!");
+	    }
+
             if (peek == '.') {  // achou . depois do primeiro numero, verifica se eh numero real
                 int n_digitos = 0;
                 float frac = 0.1;
@@ -266,6 +272,10 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     ++n_digitos;
                     if (!inStream_.get(peek)) { stop = true; }
                 }
+
+		if (isalpha(peek)) {
+                    erroLexico("Literal (num. real) seguido de letra!");
+		}
 
                 if (n_digitos == 0) {
                     erroLexico("Número real inválido!\n");
