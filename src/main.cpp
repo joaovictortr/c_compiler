@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     }
 
     // open output stream
-    fstream output(output_fname);
+    fstream output(output_fname, fstream::out);
     if (output.fail()) {  /* Check if failbit is set */
         cerr << "Failed to open output file '" << output_fname << "'" << endl;
         return 1;
@@ -40,25 +40,25 @@ int main(int argc, char *argv[]) {
 
     LexAnalyzer lex = LexAnalyzer(input);
 
-    Token token;
-    string lexeme;
+    Token token; // token
+    string lexeme; // lexema
     while(lex.getToken(token, lexeme)) {
-        cout << "<" << token.getStr() << ",";
+        output << "<" << token.getStr() << ",";
         switch(token.getTag()) {
             case Tag::ID:
-                cout << lexeme;
+                output << lexeme;
                 break;
             case Tag::STRING:
-                cout << lexeme;
+                output << lexeme;
                 break;
             case Tag::NUM_INT:
-                cout << lexeme;
+                output << lexeme;
                 break;
             case Tag::NUM_REAL:
-                cout << lexeme;
+                output << lexeme;
                 break;
         }
-        cout << ">" << endl;
+        output << ">" << endl;
     }
     return 0;
 }
