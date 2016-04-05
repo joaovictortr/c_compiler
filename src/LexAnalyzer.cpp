@@ -7,6 +7,7 @@
 #include "Tag.h"
 #include "Token.h"
 #include "NumInt.h"
+#include "NumReal.h"
 #include "Word.h"
 #include "LexAnalyzer.h"
 
@@ -29,7 +30,7 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
 
 }
 
-bool LexAnalyzer::getToken(Token& token)
+bool LexAnalyzer::getToken(Token& token, string & lexeme)
 {
     char peek = ' ';
     while(inStream_.get(peek)) {
@@ -47,6 +48,7 @@ bool LexAnalyzer::getToken(Token& token)
                     do {
                         if(!inStream_.get(peek)) return false;
                     } while(peek != '\n');
+                    ++lineCount_;
                     continue;
                     break;
                 case '*':  // trata comentario de uma ou mais linhas
@@ -195,8 +197,36 @@ bool LexAnalyzer::getToken(Token& token)
                 v = 10 * v + atoi(s.c_str());
                 if (!inStream_.get(peek)) break;
             } while(isdigit(peek));
-            inStream_.putback(peek);
-            token = NumInt(v);
+
+            if (peek == '.') {  // achou . depois do primeiro numero, verifica se eh numero real
+                int n_digitos = 0;
+                float frac = 0.1;
+                float r = static_cast<float>(v);
+
+                if (!inStream_.get(peek)) { erroLexico("Número real inválido!"); }
+
+                while(isdigit(peek)) {
+                    string s;
+                    s += peek;
+                    r += frac * atof(s.c_str());
+                    frac *= 0.1;
+                    ++n_digitos;
+                    if (!inStream_.get(peek)) { erroLexico("Número real inválido!"); }
+                }
+
+                if (n_digitos == 0) {
+                    erroLexico("Número real inválido!\n");
+                }
+                token = NumReal(r);
+                lexeme = to_string(r);
+            } else {
+                // nao era '.', coloca caracter de volta no buffer
+                inStream_.putback(peek);
+                // cria token numero inteiro
+                token = NumInt(v);
+                // atribui o numero ao lexema
+                lexeme = to_string(v);
+            }
             return true;
         }
 
@@ -205,13 +235,14 @@ bool LexAnalyzer::getToken(Token& token)
             do {
                 word += peek;
                 if (!inStream_.get(peek)) break;
-            } while(isalpha(peek));
+            } while(isalpha(peek) || isdigit(peek));
             inStream_.putback(peek);
 
             if (isReserved(word))
                 token = words_[word];
             else
                 token = getWord(Tag::ID, word);
+            lexeme = word;
             return true;
         }
 
@@ -241,6 +272,7 @@ Word & LexAnalyzer::getWord(int tag, string& lexeme)
     auto item = ret.first; // iterador sobre o par no map
     return (*item).second;
 }
+
 
 void LexAnalyzer::erroLexico(string s) {
     cerr << "[linha " << getLine() << "] Erro léxico: " << s << endl;

@@ -6,13 +6,13 @@
 
 using namespace std;
 
-class NumInt : public Token {
+class NumReal : public Token {
 public:
     typedef Token super;
 
-    NumInt(int value) : value_(value) { super::setTag(Tag::NUM_INT); }
+    NumReal(float value) : value_(value) { super::setTag(Tag::NUM_REAL); }
     string getStr() const { return std::to_string(value_); }
-    NumInt& operator=(const NumInt& other) {
+    NumReal& operator=(const NumReal& other) {
         tag_ = other.getTag();
         value_ = other.value_;
         return *this;

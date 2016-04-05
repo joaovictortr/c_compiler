@@ -13,7 +13,7 @@ using namespace std;
 class LexAnalyzer {
 public:
     LexAnalyzer(fstream& input);
-    bool getToken(Token& tokenDst);
+    bool getToken(Token& tokenDst, string & lexeme);
     size_t getLine() const { return lineCount_; }
 private:
     Word & getWord(int tag, string& word);

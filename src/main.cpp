@@ -41,9 +41,27 @@ int main(int argc, char *argv[]) {
     LexAnalyzer lex = LexAnalyzer(input);
 
     Token token;
-    while(lex.getToken(token)) {
-        //output.append(token);
-        cout << "Token ID = " << token.getTag() << " | Token = '" << Tag::tag2Str(token.getTag()) << "'" << endl;
+    string lexeme;
+    while(lex.getToken(token, lexeme)) {
+        cout << "<";
+        switch(token.getTag()) {
+            case Tag::ID:
+                cout << token.getStr() << "," << lexeme;
+                lexeme.clear();
+                break;
+            case Tag::STRING:
+                cout << token.getStr() << "," << lexeme;
+                break;
+            case Tag::NUM_INT:
+                cout << token.getStr() << "," << lexeme;
+                break;
+            case Tag::NUM_REAL:
+                cout << token.getStr() << "," << lexeme;
+                break;
+            default:
+                cout << token.getStr() << ",";
+        }
+        cout << ">" << endl;
     }
     return 0;
 }

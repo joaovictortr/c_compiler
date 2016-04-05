@@ -1,21 +1,20 @@
 #pragma once
 
 #include <map>
+#include "Tag.h"
 
 using namespace std;
 
 class Token {
 public:
     Token() = default;
+    ~Token() = default;
+    virtual string getStr() const { return Tag::tag2Str(tag_); }
     Token(int tag);
     int getTag() const;
     void setTag(int tag);
-    virtual Token& operator=(const Token& other);
-    string & getLexeme() { return lexeme_; }
-    void setLexeme(string & lexeme) { lexeme_ = lexeme; }
+    Token& operator=(const Token& other);
 
-    ~Token() = default;
 protected:
     int tag_;
-    string lexeme_;
 };
