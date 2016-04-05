@@ -27,7 +27,6 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
         w = Word(it->second, it->first);
         reserve( w );
     }
-
 }
 
 bool LexAnalyzer::getToken(Token& token, string & lexeme)
@@ -80,6 +79,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
         }
 
         // processamento dos operadores
+        string strBuf;
         switch(peek) {
             /**
              * operadores relacionais
@@ -185,6 +185,18 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
              * outros
              */
             case '"':  // string
+                strBuf += peek;
+                do {
+                    if (!inStream_.get(peek)) { erroLexico("String não fechada!"); }
+
+                    if (peek == '\n') ++lineCount_;
+
+                    strBuf += peek;
+                } while(peek != '"');
+                token = Word(Tag::STRING, strBuf);
+                lexeme = strBuf;
+                strBuf.clear();
+                return true;
                 break;
         }
 

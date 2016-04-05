@@ -1,5 +1,5 @@
 // aaaa
-a = a / 217; /* ola ola alo alo
+0a = a / 217; /* ola ola alo alo
 
 ***************
 huehuehuehue
@@ -7,5 +7,14 @@ huehuehuehue
 
 */
 
-a= a + b; // saiojdoiasjd
+while(a) {
+    if (b) {
+        a= a + b; // saiojdoiasjd
+    } else {
+        a= a + b; // saiojdoiasjd
+    }
+}
+
 b = c + a;// aoijsdioajsdoisja
+string a = "oidshfsduihfuidshfuidsfh";
+d = 3.14 + 4.1+ a;

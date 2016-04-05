@@ -43,23 +43,20 @@ int main(int argc, char *argv[]) {
     Token token;
     string lexeme;
     while(lex.getToken(token, lexeme)) {
-        cout << "<";
+        cout << "<" << token.getStr() << ",";
         switch(token.getTag()) {
             case Tag::ID:
-                cout << token.getStr() << "," << lexeme;
-                lexeme.clear();
+                cout << lexeme;
                 break;
             case Tag::STRING:
-                cout << token.getStr() << "," << lexeme;
+                cout << lexeme;
                 break;
             case Tag::NUM_INT:
-                cout << token.getStr() << "," << lexeme;
+                cout << lexeme;
                 break;
             case Tag::NUM_REAL:
-                cout << token.getStr() << "," << lexeme;
+                cout << lexeme;
                 break;
-            default:
-                cout << token.getStr() << ",";
         }
         cout << ">" << endl;
     }
