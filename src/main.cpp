@@ -57,6 +57,9 @@ int main(int argc, char *argv[]) {
             case Tag::NUM_REAL:
                 output << lexeme;
                 break;
+            case Tag::CHAR:
+                output << lexeme;
+                break;
         }
         output << ">";
     }

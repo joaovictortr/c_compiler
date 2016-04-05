@@ -222,6 +222,21 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 strBuf.clear();
                 return true;
                 break;
+            case '\'':  // char
+                strBuf += peek;
+                if (!inStream_.get(peek)) { erroLexico("Caracter não fechado!"); }
+                strBuf += peek;
+                if (!inStream_.get(peek)) { erroLexico("Caracter não fechado!"); }
+                if (peek != '\'') {
+                    erroLexico("Tipo char pode ter somente um caracter ou caracter não fechado!");
+                } else {
+                    strBuf += peek;
+                    token = Word(Tag::CHAR, Tag::tag2Str(Tag::TIPO_CHAR));
+                    lexeme = strBuf;
+                    strBuf.clear();
+                    return true;
+                }
+                break;
         }
 
         if (isdigit(peek)) {

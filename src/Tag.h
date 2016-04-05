@@ -8,46 +8,49 @@ using namespace std;
 
 class Tag {
 public:
-    static const int NUM_INT = 256; // literal numerico (numero inteiro), ex. 40
-    static const int NUM_REAL = 257; // literal numerico (numero real), ex. 26.5
-    static const int STRING = 258; // string
-    static const int ID = 259; // identificador
-    static const int OP_ASSIGN = 260; // atribuição
+    static const int CHAR = 256; // caracter, ex 'c'
+    static const int NUM_INT = 257; // literal numerico (numero inteiro), ex. 40
+    static const int NUM_REAL = 258; // literal numerico (numero real), ex. 26.5
+    static const int STRING = 259; // string
+    static const int ID = 260; // identificador
+    static const int OP_ASSIGN = 261; // atribuição
     // operadores lógicos
-    static const int LOGOP_AND = 261; // &&
-    static const int LOGOP_OR = 262; // ||
+    static const int LOGOP_AND = 262; // &&
+    static const int LOGOP_OR = 263; // ||
     // operadores relacionais
-    static const int RELOP_EQ = 263;  // ==
-    static const int RELOP_NEQ = 264; // !=
-    static const int RELOP_BGT = 265; // >
-    static const int RELOP_SLT = 266; // <
-    static const int RELOP_BGT_EQ = 267; // >=
-    static const int RELOP_SLT_EQ = 268; // <=
+    static const int RELOP_EQ = 264;  // ==
+    static const int RELOP_NEQ = 265; // !=
+    static const int RELOP_BGT = 266; // >
+    static const int RELOP_SLT = 267; // <
+    static const int RELOP_BGT_EQ = 268; // >=
+    static const int RELOP_SLT_EQ = 269; // <=
     // incrementos
-    static const int INCOP_PLUS = 269; // id++
-    static const int INCOP_MINUS = 270; // id--
+    static const int INCOP_PLUS = 270; // id++
+    static const int INCOP_MINUS = 271; // id--
     // operadores aritméticos
-    static const int ARTOP_DIV_INT = 271; // /
-    static const int ARTOP_DIV_REAL = 272; // #
-    static const int ARTOP_PLUS = 273; // +
-    static const int ARTOP_MINUS = 274; // -
-    static const int ARTOP_MOD = 275; // %
-    static const int ARTOP_MULT = 276; // *
+    static const int ARTOP_DIV_INT = 272; // /
+    static const int ARTOP_DIV_REAL = 273; // #
+    static const int ARTOP_PLUS = 274; // +
+    static const int ARTOP_MINUS = 275; // -
+    static const int ARTOP_MOD = 276; // %
+    static const int ARTOP_MULT = 277; // *
     // comandos
-    static const int FOR = 277;
-    static const int WHILE = 278;
-    static const int IF = 279;
-    static const int ELSE = 280;
-    static const int RETURN = 281;
+    static const int FOR = 278;
+    static const int WHILE = 279;
+    static const int IF = 280;
+    static const int ELSE = 281;
+    static const int RETURN = 282;
     // tipos basicos
-    static const int TIPO_CHAR = 282;
-    static const int TIPO_INT = 283;
-    static const int TIPO_FLOAT = 284;
-    static const int TIPO_STRING = 285;
-    static const int TIPO_CONST = 286;
+    static const int TIPO_CHAR = 283;
+    static const int TIPO_INT = 284;
+    static const int TIPO_FLOAT = 285;
+    static const int TIPO_STRING = 286;
+    static const int TIPO_CONST = 287;
 
     static string tag2Str(int tag) {
         switch(tag) {
+            case CHAR:
+                return "CHAR"; break;
             case NUM_INT:
                 return "NUM_INT"; break;
             case NUM_REAL:
