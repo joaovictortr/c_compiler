@@ -34,10 +34,10 @@ public:
     static const int ARTOP_MOD = 275; // %
     static const int ARTOP_MULT = 276; // *
     // comandos
-    static const int FOR = 276;
-    static const int WHILE = 277;
-    static const int IF = 278;
-    static const int ELSE = 279;
+    static const int FOR = 277;
+    static const int WHILE = 278;
+    static const int IF = 279;
+    static const int ELSE = 280;
 
     static string tag2Str(int tag) {
         switch(tag) {
@@ -86,6 +86,14 @@ public:
                 return "ARTOP_MOD"; break;
             case ARTOP_MULT:
                 return "ARTOP_MULT"; break;
+            case FOR:
+                return "FOR"; break;
+            case WHILE:
+                return "WHILE"; break;
+            case IF:
+                return "IF"; break;
+            case ELSE:
+                return "ELSE"; break;
             default:
                 string s;
                 s += static_cast<char>(tag);
