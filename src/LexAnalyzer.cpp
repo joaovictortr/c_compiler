@@ -19,7 +19,11 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
         { "for", Tag::FOR },
         { "while", Tag::WHILE },
         { "if", Tag::IF },
-        { "else", Tag::ELSE }
+        { "else", Tag::ELSE },
+        { "return", Tag::RETURN },
+        { "char", Tag::TIPO_CHAR },
+        { "int", Tag::TIPO_INT },
+        { "float", Tag::TIPO_FLOAT }
     };
 
     for(auto it = reserved_words.begin(); it != reserved_words.end(); ++it) {
@@ -220,13 +224,14 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
         if (isdigit(peek)) {
             int v = 0;
+            bool stop = false;
             do {
                 // string temp para conversao de peek para inteiro
                 string s;
                 s += peek;
                 v = 10 * v + atoi(s.c_str());
-                if (!inStream_.get(peek)) break;
-            } while(isdigit(peek));
+                if (!inStream_.get(peek)) stop = true;
+            } while(isdigit(peek) && !stop);
 
             if (peek == '.') {  // achou . depois do primeiro numero, verifica se eh numero real
                 int n_digitos = 0;
@@ -235,13 +240,14 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
                 if (!inStream_.get(peek)) { erroLexico("Número real inválido!"); }
 
-                while(isdigit(peek)) {
+                bool stop = false;
+                while(isdigit(peek) && !stop) {
                     string s;
                     s += peek;
                     r += frac * atof(s.c_str());
                     frac *= 0.1;
                     ++n_digitos;
-                    if (!inStream_.get(peek)) { erroLexico("Número real inválido!"); }
+                    if (!inStream_.get(peek)) { stop = true; }
                 }
 
                 if (n_digitos == 0) {
@@ -266,13 +272,15 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
         if (isalpha(peek)) {
             string word;
+            bool stop = false;
             do {
                 word += peek;
-                if (!inStream_.get(peek)) break;
-            } while(isalpha(peek) || isdigit(peek));
+                if (!inStream_.get(peek)) stop = true;
+            } while(isalnum(peek) && !stop);
+
             inStream_.putback(peek);
 
-            if (isReserved(word))
+            if (isPresent(word))
                 token = words_[word];
             else
                 token = getWord(Tag::ID, word);
@@ -289,12 +297,12 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 }
 
 /**
- * Verifica se uma string e palavra reservada
+ * Verifica se uma string ja existe na tabela words
  *
  * @param word string a ser verificada
- * @return true se string for palavra reservada, false caso contrario.
+ * @return true se string estiver presente em words, false caso contrario.
  */
-bool LexAnalyzer::isReserved(string & word)
+bool LexAnalyzer::isPresent(string & word)
 {
     return words_.find(word) != words_.end();
 }

@@ -38,6 +38,11 @@ public:
     static const int WHILE = 278;
     static const int IF = 279;
     static const int ELSE = 280;
+    static const int RETURN = 281;
+    // tipos basicos
+    static const int TIPO_CHAR = 282;
+    static const int TIPO_INT = 283;
+    static const int TIPO_FLOAT = 284;
 
     static string tag2Str(int tag) {
         switch(tag) {
@@ -86,6 +91,7 @@ public:
                 return "ARTOP_MOD"; break;
             case ARTOP_MULT:
                 return "ARTOP_MULT"; break;
+            /* Comandos */
             case FOR:
                 return "FOR"; break;
             case WHILE:
@@ -94,6 +100,15 @@ public:
                 return "IF"; break;
             case ELSE:
                 return "ELSE"; break;
+            case RETURN:
+                return "RETURN"; break;
+            /* Tipos basicos */
+            case TIPO_CHAR:
+                return "TIPO_CHAR"; break;
+            case TIPO_INT:
+                return "TIPO_INT"; break;
+            case TIPO_FLOAT:
+                return "TIPO_FLOAT"; break;
             default:
                 string s;
                 s += static_cast<char>(tag);

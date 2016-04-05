@@ -20,7 +20,7 @@ private:
     void reserve(Word & w) { getWord(w.getTag(), w.getLexeme()); }
     bool readLine();
     bool readChar(char & c, string & buffer, string::iterator & it);
-    bool isReserved(string & word);
+    bool isPresent(string & word);
     void erroLexico(string s);
 
     fstream& inStream_;
