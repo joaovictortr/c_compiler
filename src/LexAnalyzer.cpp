@@ -157,7 +157,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
             case '|':
                 if (!inStream_.get(peek))
                     erroLexico("Operador '|' não suportado!");
-                if (peek == '&') {  // encontrou '&&'
+                if (peek == '|') {  // encontrou '||'
                     token = Word(Tag::LOGOP_OR, Tag::tag2Str(Tag::LOGOP_OR));
                     return true;
                 } else {
