@@ -1,4 +1,5 @@
-// aaaa
+inti=lalal;
+./// aaaa
 0a = a / 217; /* ola ola alo alo
 
 ***************
