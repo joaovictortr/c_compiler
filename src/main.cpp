@@ -58,7 +58,10 @@ int main(int argc, char *argv[]) {
                 output << lexeme;
                 break;
         }
-        output << ">" << endl;
+        output << ">";
     }
+    output << endl;
+    input.close();
+    output.close();
     return 0;
 }
