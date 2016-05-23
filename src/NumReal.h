@@ -10,7 +10,7 @@ class NumReal : public Token {
 public:
     typedef Token super;
 
-    NumReal(float value) : value_(value) { super::setTag(Tag::NUM_REAL); }
+    NumReal(float value) : value_(value) { super::setTag(Tag::NUM); }
     string getStr() const { return std::to_string(value_); }
     NumReal& operator=(const NumReal& other) {
         tag_ = other.getTag();
