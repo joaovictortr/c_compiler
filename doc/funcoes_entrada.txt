@@ -1,0 +1,37 @@
+
+// remove whitespaces
+do {
+    char c = read_char();
+    if (c == '\n') ++line_counter;
+while((c == ' ' || c != '\t') && c != EOF);
+
+// digit reader
+if (!peekBuffer_.empty()) { // peek buffer contains digit
+    val = 0;
+    p = 10;
+    do {
+        // obtem digito to buffer
+        d = v * p + d.pop_back();
+        //
+        p *= 10;
+    } while(!peek.empty());
+    
+    return token<num, v>;
+}
+
+/**
+ * Verifica se uma string e palavra reservada
+ *
+ * @param word string a ser verificada
+ * @return true se string for palavra reservada, false caso contrario.
+ */
+bool LexAnalyzer::isReserved(string & word)
+{
+    return rsvWords_.find(word) < rsvWords_.end();
+}
+
+if (isReserved(peekBuffer_)) {
+    return peekBuffer_;
+} else {
+    return Token(id, peekBuffer_);
+}
