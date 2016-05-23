@@ -41,30 +41,15 @@ int main(int argc, char *argv[]) {
     LexAnalyzer lex = LexAnalyzer(input);
 
     Token token; // token
-    string lexeme; // lexema
+    string lexeme; // lexeme
     while(lex.getToken(token, lexeme)) {
-        output << "<" << token.getStr() << ",";
-        switch(token.getTag()) {
-            case Tag::ID:
-                output << lexeme;
-                break;
-            case Tag::STRING:
-                output << lexeme;
-                break;
-            case Tag::NUM_INT:
-                output << lexeme;
-                break;
-            case Tag::NUM_REAL:
-                output << lexeme;
-                break;
-            case Tag::CHAR:
-                output << lexeme;
-                break;
-        }
-        output << ">" << endl;
+        output << "<" << token.getStr() << "," << lexeme << ">" << endl;
+        lexeme.clear();
     }
     output << endl;
+    // close streams
     input.close();
     output.close();
+
     return 0;
 }
