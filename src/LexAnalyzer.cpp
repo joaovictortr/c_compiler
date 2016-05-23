@@ -361,10 +361,10 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 }
 
 /**
- * Verifica se uma string ja existe na tabela words
+ * Check if a string is a reserved word
  *
- * @param word string a ser verificada
- * @return true se string estiver presente em words, false caso contrario.
+ * @param word string to be verified
+ * @return true if the string belongs to words, return true. Otherwise, return false.
  */
 bool LexAnalyzer::isPresent(string & word)
 {
