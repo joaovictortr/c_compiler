@@ -1,3 +1,5 @@
 bin/*
 GCC/*.o
+GCC/*.d
 GCCdebug/*.o
+GCCdebug/*.d
