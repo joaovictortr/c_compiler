@@ -3,7 +3,6 @@
 #include <string>
 #include <list>
 #include <map>
-#include <boost/regex.hpp>
 #include "Tag.h"
 #include "Token.h"
 #include "NumInt.h"
@@ -21,11 +20,11 @@ LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
         { "if", Tag::IF },
         { "else", Tag::ELSE },
         { "return", Tag::RETURN },
-        { "char", Tag::TIPO_CHAR },
-        { "int", Tag::TIPO_INT },
-        { "float", Tag::TIPO_FLOAT },
-        { "string", Tag::TIPO_STRING },
-        { "const", Tag::TIPO_CONST }
+        { "char", Tag::TYPE },
+        { "int", Tag::TYPE },
+        { "float", Tag::TYPE },
+        { "string", Tag::TYPE },
+        { "const", Tag::TYPE_CONST }
     };
 
     for(auto it = reserved_words.begin(); it != reserved_words.end(); ++it) {
@@ -39,141 +38,164 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 {
     char peek = ' ';
     while(inStream_.get(peek)) {
-        // remove tabs, quebras de linha e espacos
+        // remove tabs, line breaks and spaces
         if ((peek == '\t') || (peek == ' '))
             continue;
         else if (peek == '\n') { ++lineCount_; continue; }
 
-        // remove comentários
+        // remove comments
         if (peek == '/') {
             if(!inStream_.get(peek)) return false;
             bool stopScan = false;
             switch(peek) {
-                case '/':  // trata comentario de uma linha
+                case '/':  // handle one line comments
                     do {
                         if(!inStream_.get(peek)) return false;
                     } while(peek != '\n');
                     ++lineCount_;
                     continue;
                     break;
-                case '*':  // trata comentario de uma ou mais linhas
-		    if(!inStream_.get(peek)) { erroLexico("Comentário não fechado!"); }
-                    do {
-                        if (peek == '*') {
-                            if(!inStream_.get(peek)) { erroLexico("Comentário não fechado!"); }
-                            if (peek == '/') { stopScan = true; }
-			    else if (peek == '*') { inStream_.putback(peek); }
+                case '*':  // handle multi-line comments
+                    if(!inStream_.get(peek)) { lexError("Comment not closed!"); }
+                        do {
+                            if (peek == '*') {
+                                if(!inStream_.get(peek)) { lexError("Comment not closed!"); }
+
+                                if (peek == '/') { stopScan = true; }
+                                else if (peek == '*') { inStream_.putback(peek); }
+                            }
+
+                            if (peek == '\n')
+                                ++lineCount_;
+
+                        } while(inStream_.get(peek) && !stopScan);
+
+                        if (!stopScan) { // '*/' pattern not found
+                            lexError("Comment not closed!");
                         }
-
-                        if (peek == '\n')
-                            ++lineCount_;
-
-                    } while(inStream_.get(peek) && !stopScan);
-
-                    if (!stopScan) { // nao encontrou '*/'
-                        erroLexico("Comentário não fechado!");
-                    }
-                    // coloca ultimo caracter lido de volta na stream
+                    // put last character back on the stream
                     inStream_.putback(peek);
                     continue;
                     break;
                 default:
-                    // coloca caracter de volta na stream
+                    // put character back on the stream
                     inStream_.putback(peek);
-                    // cria token operador de divisão por inteiro
-                    token = Word(Tag::ARTOP_DIV_INT, Tag::tag2Str(Tag::ARTOP_DIV_INT));
+                    // create integer division operator
+                    token = Word(Tag::ARTOP, "/");
+                    lexeme = "/";
                     return true;
             }
         }
 
-        // processamento dos operadores
+        // handle operators
         string strBuf;
+
         switch(peek) {
             /**
-             * operadores relacionais
+             * Relational operators
              */
             case '=':
                 if (!inStream_.get(peek)) return false;
 
-                if (peek == '=') {  // encontrou '=='
-                    // cria token para operador de igualdade
-                    token = Word(Tag::RELOP_EQ, Tag::tag2Str(Tag::RELOP_EQ));
-                } else { // atribuição
-                    // coloca caracter lido de volta no buffer
+                if (peek == '=') {  // found '==' operator
+                    // create token for equality operator
+                    token = Word(Tag::RELOP, "==");
+                    lexeme = "==";
+
+                    return true;
+                } else { // assignment
+                    // put last read character back on the stream
                     inStream_.putback(peek);
-                    // cria token de atribuição
-                    token = Word(Tag::OP_ASSIGN, Tag::tag2Str(Tag::OP_ASSIGN));
+                    peek = '=';
+                    // create assignment operator
+                    //token = Word(Tag::OP_ASSIGN, Tag::tag2Str(Tag::OP_ASSIGN));
                 }
-                return true;
+                //return true;
                 break;
             case '!':
                 if (!inStream_.get(peek))
-                    erroLexico("Operador '!' não suportado!");
-                if (peek == '=') {  // encontrou '!='
-                    token = Word(Tag::RELOP_NEQ, Tag::tag2Str(Tag::RELOP_NEQ));
+                    lexError("Operator '!' not supported!");
+
+                if (peek == '=') {  // found '!=' operator
+                    token = Word(Tag::RELOP, "!=");
+                    lexeme = "!=";
+
                     return true;
                 } else {
-                    erroLexico("Operador '!' não suportado!");
+                    lexError("Operator '!' not supported!");
                 }
                 break;
             case '>':
                 if (!inStream_.get(peek)) return false;
 
-                if (peek == '=') {  // encontrou '>='
-                    // cria token de maior ou igual
-                    token = Word(Tag::RELOP_BGT_EQ, Tag::tag2Str(Tag::RELOP_BGT_EQ));
-                } else { // operador '>'
-                    // coloca caracter lido de volta no buffer
+                if (peek == '=') {  // found '>=' operator
+                    // create token with ">=" operator
+                    token = Word(Tag::RELOP, ">=");
+                    lexeme = ">=";
+                } else { // found '>' operator
+                    // put last read character back on the stream
                     inStream_.putback(peek);
-                    // cria token de maior
-                    token = Word(Tag::RELOP_BGT, Tag::tag2Str(Tag::RELOP_BGT));
+                    // create ">" token
+                    token = Word(Tag::RELOP, ">");
+                    lexeme = ">";
                 }
                 return true;
                 break;
             case '<':
                 if (!inStream_.get(peek)) return false;
-                    // cria token com operador menor
-                if (peek == '=') {  // encontrou '<='
-                    token = Word(Tag::RELOP_SLT_EQ, Tag::tag2Str(Tag::RELOP_SLT_EQ));
-                } else { // operador '<'
-                    // coloca caracter lido de volta no buffer
+
+                // crate token for operator "<" and its derivative
+                if (peek == '=') {  // found '<=' operator
+                    token = Word(Tag::RELOP, "<=");
+                    lexeme = "<=";
+                } else { // found '<' operator
+                    // put last read character back on the stream
                     inStream_.putback(peek);
-                    // cria token de menor
-                    token = Word(Tag::RELOP_SLT, Tag::tag2Str(Tag::RELOP_SLT));
+                    // create token for "<"
+                    token = Word(Tag::RELOP, "<");
+                    lexeme = "<";
                 }
                 return true;
                 break;
             /**
-             * operadores lógicos
+             * logical operators
              */
             case '&':
                 if (!inStream_.get(peek))
-                    erroLexico("Operador '&' não suportado!");
-                if (peek == '&') {  // encontrou '&&'
-                    token = Word(Tag::LOGOP_AND, Tag::tag2Str(Tag::LOGOP_AND));
+                    lexError("Operator '&' not supported!");
+
+                if (peek == '&') {  // found '&&' operator
+                    token = Word(Tag::LOGOP, "&&");
+                    lexeme = "&&";
                     return true;
                 } else {
-                    erroLexico("Operador '&' não suportado!");
+                    lexError("Operator '&' not supported!");
                 }
                 break;
             case '|':
                 if (!inStream_.get(peek))
-                    erroLexico("Operador '|' não suportado!");
-                if (peek == '|') {  // encontrou '||'
-                    token = Word(Tag::LOGOP_OR, Tag::tag2Str(Tag::LOGOP_OR));
+                    lexError("Operator '|' not supported!");
+
+                if (peek == '|') {  // found '||' operator
+                    token = Word(Tag::LOGOP, "||");
+                    lexeme = "||";
+
                     return true;
                 } else {
-                    erroLexico("Operador '|' não suportado!");
+                    lexError("Operator '|' not supported!");
                 }
                 break;
             /**
-             * operadores aritméticos
+             * arithmetic operators
              */
             case '#':
-                token = Word(Tag::ARTOP_DIV_REAL, Tag::tag2Str(Tag::ARTOP_DIV_REAL));
+                token = Word(Tag::ARTOP, "#");
+                lexeme = "#";
+
                 return true;
                 break;
             case '+':
+                /*
                 if (inStream_.get(peek)) {
                     if (peek == '+') { // encontrou '++', cria operador incremento
                         token = Word(Tag::INCOP_PLUS, Tag::tag2Str(Tag::INCOP_PLUS));
@@ -184,11 +206,16 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     }
                 }
                 token = Word(Tag::ARTOP_PLUS, Tag::tag2Str(Tag::ARTOP_PLUS));
+                */
+                token = Word(Tag::ARTOP, "+");
+                lexeme = "+";
+
                 return true;
                 break;
             case '-':
+                /*
                 if (inStream_.get(peek)) {
-                    if (peek == '-') { // encontrou '--', cria operador decremento
+                    if (peek == '-') { // found '--', create '--' operator
                         token = Word(Tag::INCOP_MINUS, Tag::tag2Str(Tag::INCOP_MINUS));
                         return true;
                     } else {
@@ -196,29 +223,40 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                         inStream_.putback(peek);
                     }
                 }
-                token = Word(Tag::ARTOP_MINUS, Tag::tag2Str(Tag::ARTOP_MINUS));
+                */
+                token = Word(Tag::ARTOP, "-");
+                lexeme = "-";
+
                 return true;
                 break;
             case '%':
-                token = Word(Tag::ARTOP_MOD, Tag::tag2Str(Tag::ARTOP_MOD));
+                //token = Word(Tag::ARTOP_MOD, Tag::tag2Str(Tag::ARTOP_MOD));
+
+                token = Word(Tag::ARTOP, "%");
+                lexeme = "%";
+
                 return true;
                 break;
             case '*':
-                token = Word(Tag::ARTOP_MULT, Tag::tag2Str(Tag::ARTOP_MULT));
+                //token = Word(Tag::ARTOP_MULT, Tag::tag2Str(Tag::ARTOP_MULT));
+                token = Word(Tag::ARTOP, "*");
+                lexeme = "*";
+
                 return true;
                 break;
             /**
-             * outros
+             * etc
              */
             case '"':  // string
                 strBuf += peek;
                 do {
-                    if (!inStream_.get(peek)) { erroLexico("String não fechada!"); }
+                    if (!inStream_.get(peek)) { lexError("String is not properly closed!"); }
 
                     if (peek == '\n') ++lineCount_;
 
                     strBuf += peek;
                 } while(peek != '"');
+
                 token = Word(Tag::STRING, strBuf);
                 lexeme = strBuf;
                 strBuf.clear();
@@ -226,14 +264,14 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 break;
             case '\'':  // char
                 strBuf += peek;
-                if (!inStream_.get(peek)) { erroLexico("Caracter não fechado!"); }
+                if (!inStream_.get(peek)) { lexError("Character not properly closed!"); }
                 strBuf += peek;
-                if (!inStream_.get(peek)) { erroLexico("Caracter não fechado!"); }
+                if (!inStream_.get(peek)) { lexError("Character not properly closed!"); }
                 if (peek != '\'') {
-                    erroLexico("Tipo char pode ter somente um caracter ou caracter não fechado!");
+                    lexError("Char type can have only one character enclosed by simple quotes (ex. 'a')");
                 } else {
                     strBuf += peek;
-                    token = Word(Tag::CHAR, Tag::tag2Str(Tag::CHAR));
+                    token = Word(Tag::STRING, strBuf);
                     lexeme = strBuf;
                     strBuf.clear();
                     return true;
@@ -245,23 +283,23 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
             int v = 0;
             bool stop = false;
             do {
-                // string temp para conversao de peek para inteiro
+                // temp string to convert peek to number
                 string s;
                 s += peek;
                 v = 10 * v + atoi(s.c_str());
                 if (!inStream_.get(peek)) stop = true;
             } while(isdigit(peek) && !stop);
 
-	    if (isalpha(peek)) { // numero seguido de letra, erro léxico
-		erroLexico("Literal (num. inteiro) seguido de letra!");
-	    }
+            if (isalpha(peek)) { // number followed by an alphabetic character
+                lexError("Literal (integer) followed by alphabetic character!");
+            }
 
-            if (peek == '.') {  // achou . depois do primeiro numero, verifica se eh numero real
-                int n_digitos = 0;
+            if (peek == '.') {  // found . after first number, check for real number
+                int n_digits = 0;
                 float frac = 0.1;
                 float r = static_cast<float>(v);
 
-                if (!inStream_.get(peek)) { erroLexico("Número real inválido!"); }
+                if (!inStream_.get(peek)) { lexError("Invalid real number!"); }
 
                 bool stop = false;
                 while(isdigit(peek) && !stop) {
@@ -269,29 +307,28 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     s += peek;
                     r += frac * atof(s.c_str());
                     frac *= 0.1;
-                    ++n_digitos;
+                    ++n_digits;
                     if (!inStream_.get(peek)) { stop = true; }
                 }
 
-		if (isalpha(peek)) {
-                    erroLexico("Literal (num. real) seguido de letra!");
-		}
-
-                if (n_digitos == 0) {
-                    erroLexico("Número real inválido!\n");
+                if (isalpha(peek)) {
+                    lexError("Literal (real number) followed by alphabetic character!");
                 }
-                // ultimo peek lido nao era digito, coloca
-                // peek de volta no buffer
+
+                if (n_digits == 0) {
+                    lexError("Invalid real number!\n");
+                }
+                // last read peek was not a digit, put peek back on the stream
                 inStream_.putback(peek);
 
                 token = NumReal(r);
                 lexeme = to_string(r);
             } else {
-                // nao era '.', coloca caracter de volta no buffer
+                // peek was not '.', put character back on the stream
                 inStream_.putback(peek);
-                // cria token numero inteiro
+                // create integeger number token
                 token = NumInt(v);
-                // atribui o numero ao lexema
+                // assign number to lexeme
                 lexeme = to_string(v);
             }
             return true;
@@ -315,8 +352,8 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
             return true;
         }
 
-        // cria um token com a tag correspondente ao valor ASCII
-        // de peek
+        // create token with the tag corresponding to peek's
+        // value in the ASCII table
         token = Token(peek);
         return true;
     }
@@ -324,10 +361,10 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 }
 
 /**
- * Verifica se uma string ja existe na tabela words
+ * Check if a string is a reserved word
  *
- * @param word string a ser verificada
- * @return true se string estiver presente em words, false caso contrario.
+ * @param word string to be verified
+ * @return true if the string belongs to words, return true. Otherwise, return false.
  */
 bool LexAnalyzer::isPresent(string & word)
 {
@@ -343,7 +380,7 @@ Word & LexAnalyzer::getWord(int tag, string& lexeme)
 }
 
 
-void LexAnalyzer::erroLexico(string s) {
-    cerr << "[linha " << getLine() << "] Erro léxico: " << s << endl;
+void LexAnalyzer::lexError(string s) {
+    cerr << "[line " << getLine() << "] Lexical error: " << s << endl;
     exit(1);
 }

@@ -21,7 +21,7 @@ private:
     bool readLine();
     bool readChar(char & c, string & buffer, string::iterator & it);
     bool isPresent(string & word);
-    void erroLexico(string s);
+    void lexError(string s);
 
     fstream& inStream_;
     size_t lineCount_;
