@@ -7,12 +7,10 @@ using namespace std;
 
 class Word : public Token {
 public:
-    typedef Token super;
-
     Word() = default;
-    Word(int type, string word) : type_(type), lexeme_(word) { super::setTag(type); }
+    Word(int type, string word) : type_(type), lexeme_(word) { setType(type); }
     Word& operator=(const Word& other) {
-        tag_ = other.getTag();
+        type_ = other.getType();
         lexeme_ = other.getLexeme();
         return *this;
     }

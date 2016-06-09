@@ -1,22 +1,24 @@
 #pragma once
 
 #include <string>
-#include "Tag.h"
+#include "TokenType.h"
 #include "Token.h"
 
 using namespace std;
 
 class NumInt : public Token {
 public:
-    typedef Token super;
+    NumInt(int value) : value_(value) { setType(TokenType::NUM); }
 
-    NumInt(int value) : value_(value) { super::setTag(Tag::NUM); }
-    string getStr() const { return std::to_string(value_); }
+    // get token value
+    string getValue() const { return std::to_string(value_); }
+
     NumInt& operator=(const NumInt& other) {
-        tag_ = other.getTag();
+        type_ = other.getType();
         value_ = other.value_;
         return *this;
     }
+
 protected:
     int value_;
 };

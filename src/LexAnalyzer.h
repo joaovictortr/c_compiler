@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 #include <map>
-#include "Tag.h"
+#include "TokenType.h"
 #include "Token.h"
 #include "NumInt.h"
 #include "Word.h"
@@ -17,7 +17,7 @@ public:
     size_t getLine() const { return lineCount_; }
 private:
     Word & getWord(int tag, string& word);
-    void reserve(Word & w) { getWord(w.getTag(), w.getLexeme()); }
+    void reserve(Word & w) { getWord(w.getType(), w.getLexeme()); }
     bool readLine();
     bool readChar(char & c, string & buffer, string::iterator & it);
     bool isPresent(string & word);

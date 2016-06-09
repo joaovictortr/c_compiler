@@ -3,28 +3,25 @@
 #include <string>
 #include <list>
 #include <map>
-#include "Tag.h"
+#include "TokenType.h"
 #include "Token.h"
-#include "NumInt.h"
-#include "NumReal.h"
-#include "Word.h"
-#include "LexAnalyzer.h"
+#include "Types.h"  // all token types
 
 using namespace std;
 
 LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
 {
     map< string, int > reserved_words = {
-        { "for", Tag::FOR },
-        { "while", Tag::WHILE },
-        { "if", Tag::IF },
-        { "else", Tag::ELSE },
-        { "return", Tag::RETURN },
-        { "char", Tag::TYPE },
-        { "int", Tag::TYPE },
-        { "float", Tag::TYPE },
-        { "string", Tag::TYPE },
-        { "const", Tag::TYPE_CONST }
+        { "for", TokenType::FOR },
+        { "while", TokenType::WHILE },
+        { "if", TokenType::IF },
+        { "else", TokenType::ELSE },
+        { "return", TokenType::RETURN },
+        { "char", TokenType::TYPE },
+        { "int", TokenType::TYPE },
+        { "float", TokenType::TYPE },
+        { "string", TokenType::TYPE },
+        { "const", TokenType::TYPE_CONST }
     };
 
     for(auto it = reserved_words.begin(); it != reserved_words.end(); ++it) {
@@ -81,7 +78,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     // put character back on the stream
                     inStream_.putback(peek);
                     // create integer division operator
-                    token = Word(Tag::ARTOP, "/");
+                    token = Word(TokenType::ARTOP, "/");
                     lexeme = "/";
                     return true;
             }
@@ -99,7 +96,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
                 if (peek == '=') {  // found '==' operator
                     // create token for equality operator
-                    token = Word(Tag::RELOP, "==");
+                    token = Word(TokenType::RELOP, "==");
                     lexeme = "==";
 
                     return true;
@@ -108,7 +105,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     inStream_.putback(peek);
                     peek = '=';
                     // create assignment operator
-                    //token = Word(Tag::OP_ASSIGN, Tag::tag2Str(Tag::OP_ASSIGN));
+                    //token = Word(TokenType::OP_ASSIGN, TokenType::type2Str(TokenType::OP_ASSIGN));
                 }
                 //return true;
                 break;
@@ -117,7 +114,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Operator '!' not supported!");
 
                 if (peek == '=') {  // found '!=' operator
-                    token = Word(Tag::RELOP, "!=");
+                    token = Word(TokenType::RELOP, "!=");
                     lexeme = "!=";
 
                     return true;
@@ -130,13 +127,13 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
                 if (peek == '=') {  // found '>=' operator
                     // create token with ">=" operator
-                    token = Word(Tag::RELOP, ">=");
+                    token = Word(TokenType::RELOP, ">=");
                     lexeme = ">=";
                 } else { // found '>' operator
                     // put last read character back on the stream
                     inStream_.putback(peek);
                     // create ">" token
-                    token = Word(Tag::RELOP, ">");
+                    token = Word(TokenType::RELOP, ">");
                     lexeme = ">";
                 }
                 return true;
@@ -146,13 +143,13 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
                 // crate token for operator "<" and its derivative
                 if (peek == '=') {  // found '<=' operator
-                    token = Word(Tag::RELOP, "<=");
+                    token = Word(TokenType::RELOP, "<=");
                     lexeme = "<=";
                 } else { // found '<' operator
                     // put last read character back on the stream
                     inStream_.putback(peek);
                     // create token for "<"
-                    token = Word(Tag::RELOP, "<");
+                    token = Word(TokenType::RELOP, "<");
                     lexeme = "<";
                 }
                 return true;
@@ -165,7 +162,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Operator '&' not supported!");
 
                 if (peek == '&') {  // found '&&' operator
-                    token = Word(Tag::LOGOP, "&&");
+                    token = Word(TokenType::LOGOP, "&&");
                     lexeme = "&&";
                     return true;
                 } else {
@@ -177,7 +174,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Operator '|' not supported!");
 
                 if (peek == '|') {  // found '||' operator
-                    token = Word(Tag::LOGOP, "||");
+                    token = Word(TokenType::LOGOP, "||");
                     lexeme = "||";
 
                     return true;
@@ -189,7 +186,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
              * arithmetic operators
              */
             case '#':
-                token = Word(Tag::ARTOP, "#");
+                token = Word(TokenType::ARTOP, "#");
                 lexeme = "#";
 
                 return true;
@@ -198,16 +195,16 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 /*
                 if (inStream_.get(peek)) {
                     if (peek == '+') { // encontrou '++', cria operador incremento
-                        token = Word(Tag::INCOP_PLUS, Tag::tag2Str(Tag::INCOP_PLUS));
+                        token = Word(TokenType::INCOP_PLUS, TokenType::tag2Str(TokenType::INCOP_PLUS));
                         return true;
                     } else {
                         // peek nao eh '+', coloca '+' de volta no buffer
                         inStream_.putback(peek);
                     }
                 }
-                token = Word(Tag::ARTOP_PLUS, Tag::tag2Str(Tag::ARTOP_PLUS));
+                token = Word(TokenType::ARTOP_PLUS, TokenType::type2Str(TokenType::ARTOP_PLUS));
                 */
-                token = Word(Tag::ARTOP, "+");
+                token = Word(TokenType::ARTOP, "+");
                 lexeme = "+";
 
                 return true;
@@ -216,7 +213,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 /*
                 if (inStream_.get(peek)) {
                     if (peek == '-') { // found '--', create '--' operator
-                        token = Word(Tag::INCOP_MINUS, Tag::tag2Str(Tag::INCOP_MINUS));
+                        token = Word(TokenType::INCOP_MINUS, TokenType::tag2Str(TokenType::INCOP_MINUS));
                         return true;
                     } else {
                         // peek nao eh '-', coloca '+' de volta no buffer
@@ -224,22 +221,22 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     }
                 }
                 */
-                token = Word(Tag::ARTOP, "-");
+                token = Word(TokenType::ARTOP, "-");
                 lexeme = "-";
 
                 return true;
                 break;
             case '%':
-                //token = Word(Tag::ARTOP_MOD, Tag::tag2Str(Tag::ARTOP_MOD));
+                //token = Word(TokenType::ARTOP_MOD, TokenType::tag2Str(TokenType::ARTOP_MOD));
 
-                token = Word(Tag::ARTOP, "%");
+                token = Word(TokenType::ARTOP, "%");
                 lexeme = "%";
 
                 return true;
                 break;
             case '*':
-                //token = Word(Tag::ARTOP_MULT, Tag::tag2Str(Tag::ARTOP_MULT));
-                token = Word(Tag::ARTOP, "*");
+                //token = Word(TokenType::ARTOP_MULT, TokenType::tag2Str(TokenType::ARTOP_MULT));
+                token = Word(TokenType::ARTOP, "*");
                 lexeme = "*";
 
                 return true;
@@ -257,7 +254,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     strBuf += peek;
                 } while(peek != '"');
 
-                token = Word(Tag::STRING, strBuf);
+                token = Word(TokenType::STRING, strBuf);
                 lexeme = strBuf;
                 strBuf.clear();
                 return true;
@@ -271,7 +268,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Char type can have only one character enclosed by simple quotes (ex. 'a')");
                 } else {
                     strBuf += peek;
-                    token = Word(Tag::STRING, strBuf);
+                    token = Word(TokenType::STRING, strBuf);
                     lexeme = strBuf;
                     strBuf.clear();
                     return true;
@@ -347,7 +344,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
             if (isPresent(word))
                 token = words_[word];
             else
-                token = getWord(Tag::ID, word);
+                token = getWord(TokenType::ID, word);
             lexeme = word;
             return true;
         }

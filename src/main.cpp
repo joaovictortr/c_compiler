@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     Token token; // token
     string lexeme; // lexeme
     while(lex.getToken(token, lexeme)) {
-        output << "<" << token.getStr() << "," << lexeme << ">" << endl;
+        output << "<" << token.getType() << "," << lexeme << ">" << endl;
         lexeme.clear();
     }
     output << endl;

@@ -1,19 +1,17 @@
 #pragma once
 
 #include <string>
-#include "Tag.h"
+#include "TokenType.h"
 #include "Token.h"
 
 using namespace std;
 
 class NumReal : public Token {
 public:
-    typedef Token super;
-
-    NumReal(float value) : value_(value) { super::setTag(Tag::NUM); }
+    NumReal(float value) : value_(value) { setType(TokenType::NUM); }
     string getStr() const { return std::to_string(value_); }
     NumReal& operator=(const NumReal& other) {
-        tag_ = other.getTag();
+        type_ = other.getType();
         value_ = other.value_;
         return *this;
     }

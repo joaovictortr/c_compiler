@@ -6,8 +6,7 @@
 
 using namespace std;
 
-class Tag {
-public:
+struct TokenType {
     // numeric literal
     static const int NUM = 256; // literal numerico (numero real), ex. 26.5
     // string
@@ -30,8 +29,8 @@ public:
     static const int TYPE = 267;
     static const int TYPE_CONST = 268;
 
-    static string tag2Str(int tag) {
-        switch(tag) {
+    static string type2Str(int type) {
+        switch(type) {
             case NUM:
                 return "NUM"; break;
             case STRING:
@@ -65,8 +64,8 @@ public:
                 return "TYPE_CONST"; break;
             default:
                 string s;
-                s += static_cast<char>(tag);
+                s += static_cast<char>(type);
                 return s;
         }
     }
-};
+}; // struct TokenType
