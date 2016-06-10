@@ -5,10 +5,24 @@ using namespace std;
 
 class ParserState {
 public:
+    enum state_type_t { SHIFT, REDUCE, ACCEPT, ERROR };
+
     int prodSiz() { return prodSiz_; }
+
     string& prodHead() { return prodHead_; }
+
+    state_type_t type() { return type_; }
+
+    bool isShift() { return type_ == SHIFT; }
+
+    bool isReduction() { return type_ == REDUCE; }
+
+    bool isAccept() { return type_ == ACCEPT; }
+
+    bool isError() { return type_ == ERROR; }
+
 private:
-    int type; // can be either a reduction, shift or accept
+    state_type_t type_;
     int prodSiz_;
     string prodHead_;
 };
@@ -18,14 +32,13 @@ public:
     ParserTable() = default;
     ~ParserTable() = default;
 
-    ParserState action(Token& tok);
-    ParserState goToState(string& head);
-    
-    bool isShift() {}
-    bool isReduction() {}
-    bool isAccept() {}
-    bool isError() {}
-    
+    ParserState action(Token& tok)
+    {
+    }
+
+    ParserState goToState(string& head)
+    {
+    }
 private:
     map< pair<ParserState, int>, ParserState > table_;
 };
@@ -34,13 +47,13 @@ class Parser {
 public:
     Parser() = default;
     ~Parser() = default;
-    
-    bool parse(Token &tok)
+
+    bool parse(Token& tok)
     {
         do {
             ParserState stateTop = stackSLR_.top();
             ParserState action = stateTop.action(tok);
-            
+
             if (action.isShift()) {
                 stackSLR_.push(action);
                 break; // get next token
@@ -60,7 +73,7 @@ public:
                 return false; // return false on syntax error
             }
         } while(1);
-        
+
         return true;
     }
 private:
@@ -71,11 +84,11 @@ int main()
 {
     Parser p;
     Token t;
-    
+
     while(t = getToken(stream)) {
         p.parse(t);
     }
     p.parse(); // pass end-of-input token
-    
+
     return 0;
 }
