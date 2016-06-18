@@ -8,7 +8,7 @@ class ParserState {
 public:
     enum state_type_t { SHIFT = 0, REDUCE = 1, ACCEPT = 2, ERROR = 3 };
 
-    ParserState(state_type_t type, string prodHead, int prodSiz, int tblIdx) : type_(type), prodHead_(prodHead), prodSiz_(prodSiz), tblIdx_(tblIdx) {}
+    ParserState(state_type_t type, int tblIdx, string prodHead = string(), int prodSiz = 0) : type_(type), tblIdx_(tblIdx), prodHead_(prodHead), prodSiz_(prodSiz) {}
 
     int prodSiz() const { return prodSiz_; }
 
@@ -27,7 +27,7 @@ public:
     int tblIndex() const { return tblIdx_; }
 private:
     state_type_t type_;
+    int tblIdx_;
     string prodHead_;
     int prodSiz_;
-    int tblIdx_;
 };

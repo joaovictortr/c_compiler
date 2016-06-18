@@ -35,9 +35,9 @@ ParserState ParserTable::lookup(ParserState &state, string &symbol)
     return result->second;
 }
 
-ParserState ParserTable::makeState(ParserState::state_type_t type, string prodHead, int prodSiz, int tblIdx)
+ParserState ParserTable::makeState(ParserState::state_type_t type, int tblIdx, string prodHead, int prodSiz)
 {
-    ParserStatePtr stPtr = make_shared< ParserState >( type, prodHead, prodSiz, tblIdx );
+    ParserStatePtr stPtr = make_shared< ParserState >( type, tblIdx, prodHead, prodSiz );
     return *stPtr;
 }
 
@@ -47,24 +47,24 @@ void ParserTable::initTable()
 
     int idxCounter = 0;
     // shift states
-    startSt_ = make_shared< ParserState >(ParserState::SHIFT, emptyStr, 0, idxCounter++); // equivalent to e0
-    ParserState e1 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
-    ParserState e2 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
-    ParserState e3 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
-    ParserState e4 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
-    ParserState e5 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
-    ParserState e6 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
-    ParserState e7 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
-    ParserState e8 = makeState(ParserState::SHIFT, emptyStr, 0, idxCounter++);
+    startSt_ = make_shared< ParserState >(ParserState::SHIFT, idxCounter++); // equivalent to e0
+    ParserState e1 = makeState(ParserState::SHIFT, idxCounter++);
+    ParserState e2 = makeState(ParserState::SHIFT, idxCounter++);
+    ParserState e3 = makeState(ParserState::SHIFT, idxCounter++);
+    ParserState e4 = makeState(ParserState::SHIFT, idxCounter++);
+    ParserState e5 = makeState(ParserState::SHIFT, idxCounter++);
+    ParserState e6 = makeState(ParserState::SHIFT, idxCounter++);
+    ParserState e7 = makeState(ParserState::SHIFT, idxCounter++);
+    ParserState e8 = makeState(ParserState::SHIFT, idxCounter++);
     // reduction states
-    ParserState r1 = makeState(ParserState::REDUCE, "E", 3, idxCounter++);
-    ParserState r2 = makeState(ParserState::REDUCE, "E", 1, idxCounter++);
-    ParserState r3 = makeState(ParserState::REDUCE, "L", 2, idxCounter++);
-    ParserState r4 = makeState(ParserState::REDUCE, "L", 1, idxCounter++);
+    ParserState r1 = makeState(ParserState::REDUCE, idxCounter++, "E", 3);
+    ParserState r2 = makeState(ParserState::REDUCE, idxCounter++, "E", 1);
+    ParserState r3 = makeState(ParserState::REDUCE, idxCounter++, "L", 2);
+    ParserState r4 = makeState(ParserState::REDUCE, idxCounter++, "L", 1);
 
     // special states for error and accept
-    errSt_ = make_shared< ParserState >(ParserState::ERROR, emptyStr, 0, idxCounter++);
-    accSt_ = make_shared< ParserState >(ParserState::ACCEPT, emptyStr, 0, idxCounter++);
+    errSt_ = make_shared< ParserState >(ParserState::ERROR, idxCounter++);
+    accSt_ = make_shared< ParserState >(ParserState::ACCEPT, idxCounter++);
 
     /**
      * Example table:

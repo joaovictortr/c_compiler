@@ -31,6 +31,6 @@ private:
     map< pair<int, string>, ParserState> table_;
 
     ParserState lookup(ParserState &state, string &tok);
-    ParserState makeState(ParserState::state_type_t type, string prodHead, int prodSiz, int tblIdx);
+    ParserState makeState(ParserState::state_type_t type, int tblIdx, string prodHead = string(), int prodSiz = 0);
     void initTable();
 };
