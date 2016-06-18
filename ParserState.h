@@ -8,9 +8,11 @@ class ParserState {
 public:
     enum state_type_t { SHIFT, REDUCE, ACCEPT, ERROR };
 
-    int prodSiz() { return prodSiz_; }
+    ParserState(state_type_t type, string& prodHead, int prodSiz) : type_(type), prodHead_(prodHead), prodSiz_(prodSiz) {}
 
-    string& prodHead() { return prodHead_; }
+    int prodSiz() const { return prodSiz_; }
+
+    string prodHead() const { return prodHead_; }
 
     state_type_t type() { return type_; }
 
@@ -22,9 +24,11 @@ public:
 
     bool isError() { return type_ == ERROR; }
 
+    friend bool operator<(const ParserState &lhs, const ParserState &rhs);
 private:
     state_type_t type_;
-    int prodSiz_;
     string prodHead_;
+    int prodSiz_;
 };
 
+bool operator<(const ParserState &lhs, const ParserState &rhs) { return lhs.prodHead() < rhs.prodHead() && lhs.prodSiz() < rhs.prodSiz(); }
