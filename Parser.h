@@ -4,7 +4,7 @@
 #include <stack>
 #include <tuple>
 #include <string>
-#include "src/Token.h"
+#include "Token.h"
 #include "ParserState.h"
 #include "ParserTable.h"
 
