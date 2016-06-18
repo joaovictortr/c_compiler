@@ -1,11 +1,8 @@
-#include <stack>
-#include "ParserState.h"
 #include "Parser.h"
 
 Parser::Parser()
 {
-    // initialize stacks with start state
-    // and an empty token
+    // initialize stacks with start state and an empty token
     stateStack_.push(table_.startState());
     tokenStack_.push(pair<Token, string>(Token(), string()));
 }
@@ -30,7 +27,7 @@ bool Parser::parse(Token &tok)
             // pop number of symbols of the reduction from the stack
             for(int i = 0; i < action.prodSiz(); ++i) {
                 stateStack_.pop();
-                tokenStack_.pop(); // TODO: write Token to output stream
+                tokenStack_.pop();
             }
             // prodHead is the head of the reduction
             string prodHead = action.prodHead();

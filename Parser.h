@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stack>
 #include <tuple>
+#include <string>
 #include "src/Token.h"
 #include "ParserState.h"
 #include "ParserTable.h"
@@ -11,7 +12,6 @@ using namespace std;
 
 class Parser {
 public:
-    // TODO: add output stream to constructor
     Parser();
     ~Parser() = default;
 
