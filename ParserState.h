@@ -6,9 +6,9 @@ using namespace std;
 
 class ParserState {
 public:
-    enum state_type_t { SHIFT, REDUCE, ACCEPT, ERROR };
+    enum state_type_t { SHIFT = 0, REDUCE = 1, ACCEPT = 2, ERROR = 3 };
 
-    ParserState(state_type_t type, string& prodHead, int prodSiz) : type_(type), prodHead_(prodHead), prodSiz_(prodSiz) {}
+    ParserState(state_type_t type, string prodHead, int prodSiz, int tblIdx) : type_(type), prodHead_(prodHead), prodSiz_(prodSiz), tblIdx_(tblIdx) {}
 
     int prodSiz() const { return prodSiz_; }
 
@@ -24,11 +24,10 @@ public:
 
     bool isError() { return type_ == ERROR; }
 
-    friend bool operator<(const ParserState &lhs, const ParserState &rhs);
+    int tblIndex() const { return tblIdx_; }
 private:
     state_type_t type_;
     string prodHead_;
     int prodSiz_;
+    int tblIdx_;
 };
-
-bool operator<(const ParserState &lhs, const ParserState &rhs) { return lhs.prodHead() < rhs.prodHead() && lhs.prodSiz() < rhs.prodSiz(); }

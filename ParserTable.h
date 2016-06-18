@@ -2,56 +2,35 @@
 
 #include <iostream>
 #include <functional>
-#include <unordered_map>
 #include <utility>
 #include <string>
+#include <memory>
 #include "src/Token.h"
 #include "ParserState.h"
 
 using namespace std;
 
-typedef pair<ParserState, string> ParserTableElement;
-
-struct ElementHash {
-    std::size_t operator()(const ParserTableElement& elem) const
-    {
-        auto state = elem.first;
-        int state_type = static_cast<int>(state.type());
-        string state_type_str = to_string(state_type);
-
-        auto symbol = elem.second;
-        return std::hash<std::string>()(state_type_str) ^
-            (std::hash<std::string>()(symbol) << 1);
-    }
-};
-
-struct ElementEqual {
-    bool operator()(const ParserTableElement& lhs, const ParserTableElement& rhs) const
-    {
-        auto lhs_state = lhs.first;
-        auto rhs_state = rhs.first;
-
-        auto lhs_symbol = lhs.second;
-        auto rhs_symbol = rhs.second;
-
-        return static_cast<int>(lhs_state.type()) == static_cast<int>(rhs_state.type()) &&
-            lhs_symbol == rhs_symbol;
-    }
-};
-
-class ParserTable {
+class ParserTable
+{
 public:
-    ParserTable() = default;
+    typedef shared_ptr< ParserState > ParserStatePtr;
+    typedef pair<int, string> ParserTableKey;
+
+    ParserTable();
     ~ParserTable() = default;
 
-    ParserState action(ParserState& state, Token& tok)
-    {
-        string tok_type = tok.strType();
-        return lookup(state, ref(tok_type));
-    }
-    ParserState goToState(ParserState& state, string& head) { return lookup(state, head); }
-
+    ParserState startState() const { return *startSt_; }
+    ParserState errorState() const { return *errSt_; }
+    ParserState acceptState() const { return *accSt_; }
+    ParserState action(ParserState &state, Token &tok);
+    ParserState goToState(ParserState &state, string &head);
 private:
-    unordered_map< pair<ParserState, string>, ElementEqual, ElementHash, ParserState > table_;
-    ParserState lookup(ParserState& state, string& symbol);
+    ParserStatePtr startSt_;
+    ParserStatePtr errSt_;
+    ParserStatePtr accSt_;
+    map< pair<int, string>, ParserState> table_;
+
+    ParserState lookup(ParserState &state, string &tok);
+    ParserState makeState(ParserState::state_type_t type, string prodHead, int prodSiz, int tblIdx);
+    void initTable();
 };
