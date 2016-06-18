@@ -4,14 +4,13 @@
 #include <string>
 #include <utility>
 #include <map>
-#include "ParserTable.h"
+#include "Parser.h"
 
 using namespace std;
 
 int main(int argc, char **argv)
 {
-    ParserTable table;
-    ParserState startState = table.startState();
+    Parser parser;
 
     return 0;
 }
