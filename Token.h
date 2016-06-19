@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 struct TokenType {
     // numeric literal
     static const int NUM = 256; // literal numerico (numero real), ex. 26.5
@@ -71,11 +72,20 @@ struct TokenType {
 class Token {
 public:
     Token() = default;
-    Token(int type) : type_(type) {}
+    Token(int type, bool hasValue = true) : type_(type)
+    {
+        static size_t tokenId(1);
+        // generate unique token id only if token has a value, i.e.
+        //  < STRING, "Hello world" >
+        // has a value and therefore this token will have a tokenId != 0.
+        if (hasValue) tokenId_= tokenId++;
+        else tokenId_ = 0;
+    }
     ~Token() = default;
 
     int getType() const { return type_; };
     string strType() const { return TokenType::type2Str(type_); }
+    size_t id() const { return tokenId_; }
 
     Token& operator=(const Token& other) {
         setType(other.getType());
@@ -84,7 +94,7 @@ public:
 
 protected:
     int type_;
+    size_t tokenId_;
     void setType(int type) { type_ = type; }
 };
-
 
