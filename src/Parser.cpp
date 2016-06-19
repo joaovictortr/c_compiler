@@ -8,7 +8,7 @@ Parser::Parser()
 }
 
 /**
- * Implements the SLR(1) parsing algorithm of one token
+ * Implements the LR parsing algorithm
  * @param tok Token to be parsed
  * @return true if no error occurs, otherwise return false
  */

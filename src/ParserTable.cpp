@@ -24,7 +24,6 @@ ParserState ParserTable::lookup(ParserState &state, string &symbol)
     ParserTableKey searchTok(state.tblIndex(), symbol);
     auto result = table_.find(searchTok);
     if (result == table_.end()) {  // element not found, return error
-        printTable();
         return errorState();
     }
     return result->second;

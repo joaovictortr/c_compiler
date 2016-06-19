@@ -3,35 +3,44 @@
 #include <string>
 #include <list>
 #include <map>
-#include "TokenType.h"
 #include "Token.h"
-#include "Types.h"  // all token types
+#include "LexAnalyzer.h"
 
 using namespace std;
 
-LexAnalyzer::LexAnalyzer(fstream& input) : inStream_(input), lineCount_(1)
+LexAnalyzer::LexAnalyzer(ifstream & input, SymbolTable & symTable) : inStream_(input), symTable_(symTable), lineCount_(1)
 {
-    map< string, int > reserved_words = {
-        { "for", TokenType::FOR },
-        { "while", TokenType::WHILE },
-        { "if", TokenType::IF },
-        { "else", TokenType::ELSE },
-        { "return", TokenType::RETURN },
-        { "char", TokenType::TYPE },
-        { "int", TokenType::TYPE },
-        { "float", TokenType::TYPE },
-        { "string", TokenType::TYPE },
-        { "const", TokenType::TYPE_CONST }
+    tokenTable_ = {
+        { "for",    Token(TokenType::FOR, 1) },
+        { "while",  Token(TokenType::WHILE, 1) },
+        { "if",     Token(TokenType::IF, 1) },
+        { "else",   Token(TokenType::ELSE, 1) },
+        { "char",   Token(TokenType::TYPE, 1) },
+        { "int",    Token(TokenType::TYPE, 1) },
+        { "float",  Token(TokenType::TYPE, 1) },
+        { "string", Token(TokenType::TYPE, 1) },
+        { "const",  Token(TokenType::TYPE_CONST, 1) },
+        { "/",      Token(TokenType::ARTOP, 1) },
+        { "==",     Token(TokenType::RELOP, 1) },
+        { "!=",     Token(TokenType::RELOP, 1) },
+        { ">=",     Token(TokenType::RELOP, 1) },
+        { ">",      Token(TokenType::RELOP, 1) },
+        { "<=",     Token(TokenType::RELOP, 1) },
+        { "<",      Token(TokenType::RELOP, 1) },
+        { "&&",     Token(TokenType::LOGOP, 1) },
+        { "||",     Token(TokenType::LOGOP, 1) },
+        { "#",      Token(TokenType::ARTOP, 1) },
+        { "+",      Token(TokenType::ARTOP, 1) },
+        { "-",      Token(TokenType::ARTOP, 1) },
+        { "%",      Token(TokenType::ARTOP, 1) },
+        { "*",      Token(TokenType::ARTOP, 1) }
+        //{ "return", Token(TokenType::RETURN, 0) },  FIXME: return is not a command
     };
 
-    for(auto it = reserved_words.begin(); it != reserved_words.end(); ++it) {
-        Word w;
-        w = Word(it->second, it->first);
-        reserve( w );
-    }
+    // TODO: insert values of reserved tokens in symbol table
 }
 
-bool LexAnalyzer::getToken(Token& token, string & lexeme)
+bool LexAnalyzer::getToken(Token& token)
 {
     char peek = ' ';
     while(inStream_.get(peek)) {
@@ -77,9 +86,8 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 default:
                     // put character back on the stream
                     inStream_.putback(peek);
-                    // create integer division operator
-                    token = Word(TokenType::ARTOP, "/");
-                    lexeme = "/";
+                    // get integer division operator from token table
+                    token = tokenTable_["/"];
                     return true;
             }
         }
@@ -96,9 +104,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
                 if (peek == '=') {  // found '==' operator
                     // create token for equality operator
-                    token = Word(TokenType::RELOP, "==");
-                    lexeme = "==";
-
+                    token = tokenTable_["=="];
                     return true;
                 } else { // assignment
                     // put last read character back on the stream
@@ -114,9 +120,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Operator '!' not supported!");
 
                 if (peek == '=') {  // found '!=' operator
-                    token = Word(TokenType::RELOP, "!=");
-                    lexeme = "!=";
-
+                    token = tokenTable_["!="];
                     return true;
                 } else {
                     lexError("Operator '!' not supported!");
@@ -126,31 +130,27 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 if (!inStream_.get(peek)) return false;
 
                 if (peek == '=') {  // found '>=' operator
-                    // create token with ">=" operator
-                    token = Word(TokenType::RELOP, ">=");
-                    lexeme = ">=";
+                    // get token with ">=" operator from token table
+                    token = tokenTable_[">="];
                 } else { // found '>' operator
                     // put last read character back on the stream
                     inStream_.putback(peek);
-                    // create ">" token
-                    token = Word(TokenType::RELOP, ">");
-                    lexeme = ">";
+                    // get ">" token
+                    token = tokenTable_[">"];
                 }
                 return true;
                 break;
             case '<':
                 if (!inStream_.get(peek)) return false;
 
-                // crate token for operator "<" and its derivative
+                // create token for operator "<" and its derivative
                 if (peek == '=') {  // found '<=' operator
-                    token = Word(TokenType::RELOP, "<=");
-                    lexeme = "<=";
+                    token = tokenTable_["<="];
                 } else { // found '<' operator
                     // put last read character back on the stream
                     inStream_.putback(peek);
-                    // create token for "<"
-                    token = Word(TokenType::RELOP, "<");
-                    lexeme = "<";
+                    // get token for "<" operator
+                    token = tokenTable_["<"];
                 }
                 return true;
                 break;
@@ -162,8 +162,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Operator '&' not supported!");
 
                 if (peek == '&') {  // found '&&' operator
-                    token = Word(TokenType::LOGOP, "&&");
-                    lexeme = "&&";
+                    token = tokenTable_["&&"];
                     return true;
                 } else {
                     lexError("Operator '&' not supported!");
@@ -174,9 +173,7 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Operator '|' not supported!");
 
                 if (peek == '|') {  // found '||' operator
-                    token = Word(TokenType::LOGOP, "||");
-                    lexeme = "||";
-
+                    token = tokenTable_["||"];
                     return true;
                 } else {
                     lexError("Operator '|' not supported!");
@@ -186,59 +183,23 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
              * arithmetic operators
              */
             case '#':
-                token = Word(TokenType::ARTOP, "#");
-                lexeme = "#";
-
+                token = tokenTable_["#"];
                 return true;
                 break;
             case '+':
-                /*
-                if (inStream_.get(peek)) {
-                    if (peek == '+') { // encontrou '++', cria operador incremento
-                        token = Word(TokenType::INCOP_PLUS, TokenType::tag2Str(TokenType::INCOP_PLUS));
-                        return true;
-                    } else {
-                        // peek nao eh '+', coloca '+' de volta no buffer
-                        inStream_.putback(peek);
-                    }
-                }
-                token = Word(TokenType::ARTOP_PLUS, TokenType::type2Str(TokenType::ARTOP_PLUS));
-                */
-                token = Word(TokenType::ARTOP, "+");
-                lexeme = "+";
-
+                token = tokenTable_["+"];
                 return true;
                 break;
             case '-':
-                /*
-                if (inStream_.get(peek)) {
-                    if (peek == '-') { // found '--', create '--' operator
-                        token = Word(TokenType::INCOP_MINUS, TokenType::tag2Str(TokenType::INCOP_MINUS));
-                        return true;
-                    } else {
-                        // peek nao eh '-', coloca '+' de volta no buffer
-                        inStream_.putback(peek);
-                    }
-                }
-                */
-                token = Word(TokenType::ARTOP, "-");
-                lexeme = "-";
-
+                token = tokenTable_["-"];
                 return true;
                 break;
             case '%':
-                //token = Word(TokenType::ARTOP_MOD, TokenType::tag2Str(TokenType::ARTOP_MOD));
-
-                token = Word(TokenType::ARTOP, "%");
-                lexeme = "%";
-
+                token = tokenTable_["%"];
                 return true;
                 break;
             case '*':
-                //token = Word(TokenType::ARTOP_MULT, TokenType::tag2Str(TokenType::ARTOP_MULT));
-                token = Word(TokenType::ARTOP, "*");
-                lexeme = "*";
-
+                token = tokenTable_["*"];
                 return true;
                 break;
             /**
@@ -254,8 +215,10 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     strBuf += peek;
                 } while(peek != '"');
 
-                token = Word(TokenType::STRING, strBuf);
-                lexeme = strBuf;
+                // create token for string
+                token = makeToken(TokenType::STRING, 1);
+                // insert string into symbol table
+                symTable_.insert(token.id(), strBuf);
                 strBuf.clear();
                 return true;
                 break;
@@ -268,8 +231,10 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                     lexError("Char type can have only one character enclosed by simple quotes (ex. 'a')");
                 } else {
                     strBuf += peek;
-                    token = Word(TokenType::STRING, strBuf);
-                    lexeme = strBuf;
+                    // create token for character
+                    token = makeToken(TokenType::STRING, 1);
+                    // insert character into symbol table
+                    symTable_.insert(token.id(), strBuf);
                     strBuf.clear();
                     return true;
                 }
@@ -318,19 +283,20 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
                 // last read peek was not a digit, put peek back on the stream
                 inStream_.putback(peek);
 
-                token = NumReal(r);
-                lexeme = to_string(r);
+                token = makeToken(TokenType::NUM_FLOAT, 1);
+                symTable_.insert(token.id(), r);
             } else {
                 // peek was not '.', put character back on the stream
                 inStream_.putback(peek);
-                // create integeger number token
-                token = NumInt(v);
-                // assign number to lexeme
-                lexeme = to_string(v);
+                // create token for integer
+                token = makeToken(TokenType::NUM_INT, 1);
+                // insert integer number into the symbol table
+                symTable_.insert(token.id(), v);
             }
             return true;
         }
 
+        /*
         if (isalpha(peek)) {
             string word;
             bool stop = false;
@@ -341,17 +307,19 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
 
             inStream_.putback(peek);
 
-            if (isPresent(word))
-                token = words_[word];
-            else
-                token = getWord(TokenType::ID, word);
-            lexeme = word;
+            if (hasToken(word))
+                token = tokenTable_[word];
+            else {
+                token = makeToken(TokenType::ID, 1);
+                symTable_.insert(token.id(), word);
+            }
             return true;
         }
+        */
 
         // create token with the tag corresponding to peek's
         // value in the ASCII table
-        token = Token(peek);
+        token = makeToken(static_cast<int>(peek), false);
         return true;
     }
     return false;
@@ -363,21 +331,19 @@ bool LexAnalyzer::getToken(Token& token, string & lexeme)
  * @param word string to be verified
  * @return true if the string belongs to words, return true. Otherwise, return false.
  */
-bool LexAnalyzer::isPresent(string & word)
+bool LexAnalyzer::hasToken(string & strTok)
 {
-    return words_.find(word) != words_.end();
+    return tokenTable_.find(strTok) != tokenTable_.end();
 }
-
-Word & LexAnalyzer::getWord(int tag, string& lexeme)
-{
-    Word word = Word(tag, lexeme);
-    auto ret = words_.insert({ lexeme, word });
-    auto item = ret.first; // iterador sobre o par no map
-    return (*item).second;
-}
-
 
 void LexAnalyzer::lexError(string s) {
     cerr << "[line " << getLine() << "] Lexical error: " << s << endl;
     exit(1);
+}
+
+Token & LexAnalyzer::makeToken(const int type, bool hasValue)
+{
+    shared_ptr< Token > tok = make_shared< Token >( type, hasValue );
+    tokenPtrs_.push_back(tok);
+    return *tok;
 }
