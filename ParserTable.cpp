@@ -21,44 +21,41 @@ ParserState ParserTable::goToState(ParserState& state, string& head)
 
 ParserState ParserTable::lookup(ParserState &state, string &symbol)
 {
-    ParserTableKey searchTok = ParserTableKey(state.tblIndex(), symbol);
+    ParserTableKey searchTok(state.tblIndex(), symbol);
     auto result = table_.find(searchTok);
     if (result == table_.end()) {  // element not found, return error
+        printTable();
         return errorState();
     }
     return result->second;
 }
 
-ParserState ParserTable::makeState(ParserState::state_type_t type, int tblIdx, string prodHead, int prodSiz)
+ParserState ParserTable::makeState(ParserState::state_type_t type, string name, string prodHead, int prodSiz)
 {
-    ParserStatePtr stPtr = make_shared< ParserState >( type, tblIdx, prodHead, prodSiz );
+    ParserStatePtr stPtr = make_shared< ParserState >( type, name, prodHead, prodSiz );
     return *stPtr;
 }
 
 void ParserTable::initTable()
 {
-    string emptyStr("");
-
-    int idxCounter = 0;
     // shift states
-    startSt_ = make_shared< ParserState >(ParserState::SHIFT, idxCounter++); // equivalent to e0
-    ParserState e1 = makeState(ParserState::SHIFT, idxCounter++);
-    ParserState e2 = makeState(ParserState::SHIFT, idxCounter++);
-    ParserState e3 = makeState(ParserState::SHIFT, idxCounter++);
-    ParserState e4 = makeState(ParserState::SHIFT, idxCounter++);
-    ParserState e5 = makeState(ParserState::SHIFT, idxCounter++);
-    ParserState e6 = makeState(ParserState::SHIFT, idxCounter++);
-    ParserState e7 = makeState(ParserState::SHIFT, idxCounter++);
-    ParserState e8 = makeState(ParserState::SHIFT, idxCounter++);
+    startSt_ = make_shared< ParserState >(ParserState::SHIFT, "e0"); // equivalent to e0
+    ParserState e1 = makeState(ParserState::SHIFT, "e1");
+    ParserState e2 = makeState(ParserState::SHIFT, "e2");
+    ParserState e3 = makeState(ParserState::SHIFT, "e3");
+    ParserState e4 = makeState(ParserState::SHIFT, "e4");
+    ParserState e5 = makeState(ParserState::SHIFT, "e5");
+    ParserState e6 = makeState(ParserState::SHIFT, "e6");
+    ParserState e7 = makeState(ParserState::SHIFT, "e7");
     // reduction states
-    ParserState r1 = makeState(ParserState::REDUCE, idxCounter++, "E", 3);
-    ParserState r2 = makeState(ParserState::REDUCE, idxCounter++, "E", 1);
-    ParserState r3 = makeState(ParserState::REDUCE, idxCounter++, "L", 2);
-    ParserState r4 = makeState(ParserState::REDUCE, idxCounter++, "L", 1);
+    ParserState r1 = makeState(ParserState::REDUCE, "r1", "E", 3);
+    ParserState r2 = makeState(ParserState::REDUCE, "r2", "E", 1);
+    ParserState r3 = makeState(ParserState::REDUCE, "r3", "L", 2);
+    ParserState r4 = makeState(ParserState::REDUCE, "r4", "L", 1);
 
     // special states for error and accept
-    errSt_ = make_shared< ParserState >(ParserState::ERROR, idxCounter++);
-    accSt_ = make_shared< ParserState >(ParserState::ACCEPT, idxCounter++);
+    errSt_ = make_shared< ParserState >(ParserState::ERROR, "error");
+    accSt_ = make_shared< ParserState >(ParserState::ACCEPT, "accept");
 
     /**
      * Example table:
@@ -76,29 +73,40 @@ void ParserTable::initTable()
      *   | e7 |     |     | r1  | r1  |  r1 |  r1 |
      *   +----------------------------------------+
      */
-    map< pair<int, string>, ParserState> table_ = {
-        { pair<int, string>(startState().tblIndex(), "E"), e1 },
-        { pair<int, string>(startState().tblIndex(), "("), e2 },
-        { pair<int, string>(startState().tblIndex(), "a"), e3 },
-        { pair<int, string>(e1.tblIndex(), "$"), acceptState() },
-        { pair<int, string>(e2.tblIndex(), "E"), e4 },
-        { pair<int, string>(e2.tblIndex(), "L"), e6 },
-        { pair<int, string>(e2.tblIndex(), "("), e2 },
-        { pair<int, string>(e2.tblIndex(), "a"), e3 },
-        { pair<int, string>(e3.tblIndex(), "("), r2 },
-        { pair<int, string>(e3.tblIndex(), ")"), r2 },
-        { pair<int, string>(e3.tblIndex(), "a"), r2 },
-        { pair<int, string>(e3.tblIndex(), "$"), r2 },
-        { pair<int, string>(e4.tblIndex(), "E"), e4 },
-        { pair<int, string>(e4.tblIndex(), "L"), e5 },
-        { pair<int, string>(e4.tblIndex(), "("), e2 },
-        { pair<int, string>(e4.tblIndex(), ")"), r4 },
-        { pair<int, string>(e4.tblIndex(), "a"), e3 },
-        { pair<int, string>(e5.tblIndex(), ")"), r3 },
-        { pair<int, string>(e6.tblIndex(), ")"), e7 },
-        { pair<int, string>(e7.tblIndex(), "("), r1 },
-        { pair<int, string>(e7.tblIndex(), ")"), r1 },
-        { pair<int, string>(e7.tblIndex(), "a"), r1 },
-        { pair<int, string>(e7.tblIndex(), "$"), r1 }
+    table_ = {
+        { ParserTableKey(startState().tblIndex(), "E"), e1 },
+        { ParserTableKey(startState().tblIndex(), "("), e2 },
+        { ParserTableKey(startState().tblIndex(), "a"), e3 },
+        { ParserTableKey(e1.tblIndex(), "$"), acceptState() },
+        { ParserTableKey(e2.tblIndex(), "E"), e4 },
+        { ParserTableKey(e2.tblIndex(), "L"), e6 },
+        { ParserTableKey(e2.tblIndex(), "("), e2 },
+        { ParserTableKey(e2.tblIndex(), "a"), e3 },
+        { ParserTableKey(e3.tblIndex(), "("), r2 },
+        { ParserTableKey(e3.tblIndex(), ")"), r2 },
+        { ParserTableKey(e3.tblIndex(), "a"), r2 },
+        { ParserTableKey(e3.tblIndex(), "$"), r2 },
+        { ParserTableKey(e4.tblIndex(), "E"), e4 },
+        { ParserTableKey(e4.tblIndex(), "L"), e5 },
+        { ParserTableKey(e4.tblIndex(), "("), e2 },
+        { ParserTableKey(e4.tblIndex(), ")"), r4 },
+        { ParserTableKey(e4.tblIndex(), "a"), e3 },
+        { ParserTableKey(e5.tblIndex(), ")"), r3 },
+        { ParserTableKey(e6.tblIndex(), ")"), e7 },
+        { ParserTableKey(e7.tblIndex(), "("), r1 },
+        { ParserTableKey(e7.tblIndex(), ")"), r1 },
+        { ParserTableKey(e7.tblIndex(), "a"), r1 },
+        { ParserTableKey(e7.tblIndex(), "$"), r1 }
     };
+}
+
+void ParserTable::printTable()
+{
+    cout << " -- BEGIN TABLE --" << endl;
+    for(auto it = table_.begin(); it != table_.end(); ++it) {
+        ParserTableKey key = it->first;
+        ParserState value = it->second;
+        cout << "(e" << (key.first-1) << ", \"" << key.second << "\") -> " << value.name() << endl;
+    }
+    cout << "-- END TABLE --" << endl << endl;
 }

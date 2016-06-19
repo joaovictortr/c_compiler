@@ -24,13 +24,14 @@ public:
     ParserState acceptState() const { return *accSt_; }
     ParserState action(ParserState &state, Token &tok);
     ParserState goToState(ParserState &state, string &head);
+    void printTable();
 private:
     ParserStatePtr startSt_;
     ParserStatePtr errSt_;
     ParserStatePtr accSt_;
-    map< pair<int, string>, ParserState> table_;
+    map< ParserTableKey, ParserState> table_;
 
     ParserState lookup(ParserState &state, string &tok);
-    ParserState makeState(ParserState::state_type_t type, int tblIdx, string prodHead = string(), int prodSiz = 0);
+    ParserState makeState(ParserState::state_type_t type, string name = string(), string prodHead = string(), int prodSiz = 0);
     void initTable();
 };
