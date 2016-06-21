@@ -1,4 +1,4 @@
-Estado,PROG,DECL_VAR,CONST,FUNCOES,FUNCAO,MAIN,TIPO,NUM,NUM_INT,NUM_FLOAT,CMDS,CMD,IF,WHILE,FOR,ATR,ATR_FOR,INC,CH_FUNC,EXPR_MAT,TESTE,EXPR_REL,OP_REL,OP_LOG,OP_ART,main,if,while,for,else,+,-,id,const,=,;,(,),{,},string,return,$
+Estado,PROG,DECL_VAR,CONST,FUNCOES,FUNCAO,MAIN,TIPO,NUM,NUM_INT,NUM_FLOAT,CMDS,CMD,IF,WHILE,FOR,ATR,ATR_FOR,INCR,CH_FUNC,EXPR_MAT,TESTE,EXPR_REL,OP_REL,OP_LOG,OP_ART,main,if,while,for,else,+,-,id,const,=,;,(,),{,},string,return,$
 0,e1,e2,,,,,e3,,,,,,,,,,,,,,,,,,,r3,r3,r3,r3,,,,r3,r3,,,,,,,,,
 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ac
 2,,,e4,,,,r5,,,,,,,,,,,,,,,,,,,r5,,,,,,,,e5,,,,,,,,,
