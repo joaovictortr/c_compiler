@@ -17,8 +17,14 @@ bool Parser::parse(Token &tok)
     do {
         // get the state on the top of the stack without popping
         ParserState stateTop = stateStack_.top();
+
+        cout << "---------------" << endl;
+        cout << "state on top of the stack = " << stateTop.name() << endl;
+
         // lookup the action to be taken
         ParserState action = table_.action(stateTop, tok);
+        cout << "action(" << stateTop.name() << ", " << TokenType::type2Str(tok.getType()) << ")= " << action.name() << endl;
+
         if (action.isShift()) {
             stateStack_.push(action);
             tokenStack_.push(pair<Token, string>(tok, tok.strType()));

@@ -33,11 +33,19 @@ LexAnalyzer::LexAnalyzer(ifstream & input, SymbolTable & symTable) : inStream_(i
         { "+",      Token(TokenType::ARTOP, 1) },
         { "-",      Token(TokenType::ARTOP, 1) },
         { "%",      Token(TokenType::ARTOP, 1) },
-        { "*",      Token(TokenType::ARTOP, 1) }
-        //{ "return", Token(TokenType::RETURN, 0) },  FIXME: return is not a command
+        { "*",      Token(TokenType::ARTOP, 1) },
+        { "main",   Token(TokenType::MAIN, 1)  },
+        { "return", Token(TokenType::RETURN, 1) },
+        { "++",     Token(TokenType::INCROP, 1) },
+        { "--",     Token(TokenType::INCROP, 1) }
     };
 
-    // TODO: insert values of reserved tokens in symbol table
+    for(auto it = tokenTable_.begin(); it != tokenTable_.end(); ++it)
+    {
+        const string tokStr = it->first;
+        Token & tok = it->second;
+        symTable_.insert(tok.id(), tokStr);
+    }
 }
 
 bool LexAnalyzer::getToken(Token& token)
@@ -188,10 +196,26 @@ bool LexAnalyzer::getToken(Token& token)
                 break;
             case '+':
                 token = tokenTable_["+"];
+                if (inStream_.get(peek)) {
+                     if (peek == '+') { // encontrou '++', cria operador incremento
+                         token = tokenTable_["++"];
+                     } else {
+                         // peek nao eh '+', coloca '+' de volta no buffer
+                         inStream_.putback(peek);
+                     }
+                }
                 return true;
                 break;
             case '-':
                 token = tokenTable_["-"];
+                if (inStream_.get(peek)) {
+                     if (peek == '-') { // encontrou '--', cria operador incremento
+                         token = tokenTable_["--"];
+                     } else {
+                         // peek nao eh '+', coloca '+' de volta no buffer
+                         inStream_.putback(peek);
+                     }
+                }
                 return true;
                 break;
             case '%':
@@ -296,7 +320,6 @@ bool LexAnalyzer::getToken(Token& token)
             return true;
         }
 
-        /*
         if (isalpha(peek)) {
             string word;
             bool stop = false;
@@ -315,7 +338,6 @@ bool LexAnalyzer::getToken(Token& token)
             }
             return true;
         }
-        */
 
         // create token with the tag corresponding to peek's
         // value in the ASCII table

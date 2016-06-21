@@ -66,7 +66,8 @@ int main(int argc, char *argv[]) {
     // open output stream
     std::streambuf *wrBuf;
     std::ofstream of;
-    if(!output_fname.empty()) {
+    if(!output_fname.empty())
+    {
         of.open(output_fname);
         if(of.fail()) {
             cerr << "Fail to open output file \"" << output_fname << "\"" << endl;
@@ -86,7 +87,9 @@ int main(int argc, char *argv[]) {
     // initialize parser
     Parser parser = Parser();
 
+
     Token token;
+
     while(lex.getToken(token)) {
         // feed token into the parser stage
         if (!parser.parse(token)) {
@@ -105,7 +108,7 @@ int main(int argc, char *argv[]) {
             boost::apply_visitor(SymbolTableVisitor(), tblElement);
             output << tblElement << ">";
         }
-        output << ">";
+        output << ">" << endl;
     }
     // insert end-of-input symbol and parse it
     token = Token('$', 0);

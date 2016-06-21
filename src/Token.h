@@ -27,6 +27,8 @@ struct TokenType {
     // basic types
     static const int TYPE = 268;
     static const int TYPE_CONST = 269;
+    static const int MAIN = 270;
+    static const int INCROP = 271;
 
     static string type2Str(int type) {
         switch(type) {
@@ -35,34 +37,38 @@ struct TokenType {
             case NUM_FLOAT:
                 return "NUM_FLOAT"; break;
             case STRING:
-                return "STRING"; break;
+                return "string"; break;
             case ID:
-                return "ID"; break;
+                return "id"; break;
             /* logical operator */
             case LOGOP:
-                return "LOGOP"; break;
+                return "OP_LOG"; break;
             /* relational operator */
             case RELOP:
-                return "RELOP"; break;
+                return "OP_REL"; break;
             /* arithmetic operator */
             case ARTOP:
-                return "ARTOP"; break;
+                return "OP_ART"; break;
+            case INCROP:
+                return "OP_INCR"; break;
             /* commands */
             case FOR:
-                return "FOR"; break;
+                return "for"; break;
             case WHILE:
-                return "WHILE"; break;
+                return "while"; break;
             case IF:
-                return "IF"; break;
+                return "if"; break;
             case ELSE:
-                return "ELSE"; break;
+                return "else"; break;
             case RETURN:
-                return "RETURN"; break;
+                return "return"; break;
             /* basic types */
             case TYPE:
-                return "TYPE"; break;
+                return "TIPO"; break;
             case TYPE_CONST:
-                return "TYPE_CONST"; break;
+                return "const"; break;
+            case MAIN:
+                return "main"; break;
             default:
                 string s;
                 s += static_cast<char>(type);
