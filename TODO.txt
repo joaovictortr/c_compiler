@@ -1,7 +1,0 @@
-- Simplificar a gramática da linguagem
-    - Eliminar produções cuja verificação já é feita no analisador léxico
-
-- Tokens
-    - Quebrar tokens em valores terminais da gramática da linguagem
-
-- Refatorar o loop do analisador léxico
