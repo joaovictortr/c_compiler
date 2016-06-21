@@ -8,10 +8,6 @@ with open(sys.argv[1]) as f:
 
     header_tbl = list()
 
-    print "// special states for error and accept"
-    print "errSt_ = make_shared< ParserState >(ParserState::ERROR, \"error\");"
-    print "accSt_ = make_shared< ParserState >(ParserState::ACCEPT, \"accept\");"
-
     numStates = 0
     for line in f:
         linebuf = line.strip().split(",")
@@ -36,12 +32,15 @@ with open(sys.argv[1]) as f:
 
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(1, "PROG", 4)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(2, "DECL_VAR", 4)
+    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(3, "DECL_VAR", 0)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(4, "CONST", 6)
+    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(5, "CONST", 0)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(6, "FUNCOES", 2)
+    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(7, "FUNCOES", 0)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(8, "FUNCAO", 11)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(9, "MAIN", 5)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(10, "CMDS", 2)
-    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(11, "CMD", 1)
+    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(11, "CMDS", 0)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(12, "CMD", 1)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(13, "CMD", 1)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(14, "CMD", 1)
@@ -59,8 +58,8 @@ with open(sys.argv[1]) as f:
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(26, "ATR", 4)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(27, "ATR_FOR", 3)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(28, "CH_FUNC", 4)
-    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(29, "INCR", 3)
-    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(30, "INCR", 3)
+    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(29, "INCR", 2)
+    #print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(30, "INCR", 3)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(31, "EXPR_MAT", 3)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(32, "EXPR_MAT", 3)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(33, "EXPR_MAT", 3)
@@ -74,6 +73,10 @@ with open(sys.argv[1]) as f:
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(41, "NUM", 1)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(42, "NUM", 1)
     print "\n"
+    print "// special states for error and accept"
+    print "errSt_ = make_shared< ParserState >(ParserState::ERROR, \"error\");"
+    print "accSt_ = make_shared< ParserState >(ParserState::ACCEPT, \"accept\");"
+
 
     last = header_tbl.pop()
 
@@ -81,7 +84,10 @@ with open(sys.argv[1]) as f:
     for item in header_tbl:
         state, action, header = item
         sys.stdout.write('{ ')
-        pstr = "ParserTableKey({0}.tblIndex(), \"{1}\"), {2}".format(*item)
+        if state == "e0":
+            pstr = "ParserTableKey(startState().tblIndex(), \"{1}\"), {2}".format(*item)
+        else:
+            pstr = "ParserTableKey({0}.tblIndex(), \"{1}\"), {2}".format(*item)
         sys.stdout.write(pstr)
         print "},"
     sys.stdout.write('{ ')
