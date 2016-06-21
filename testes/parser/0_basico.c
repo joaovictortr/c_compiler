@@ -1,8 +1,5 @@
 int a;
-
-const pi = 3.14;
-
-int f()
+func int f()
 {
     int b;
     int k;
@@ -52,5 +49,5 @@ main {
     a = 3 % 2;
 
     f();
-    //a = f();
+    a = f();
 }

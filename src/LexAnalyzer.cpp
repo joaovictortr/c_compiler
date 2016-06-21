@@ -20,6 +20,7 @@ LexAnalyzer::LexAnalyzer(ifstream & input, SymbolTable & symTable) : inStream_(i
         { "float",  Token(TokenType::TYPE, 1) },
         { "string", Token(TokenType::TYPE, 1) },
         { "const",  Token(TokenType::TYPE_CONST, 1) },
+        { "func",  Token(TokenType::FUNCTION, 1) },
         { "/",      Token(TokenType::ARTOP, 1) },
         { "==",     Token(TokenType::RELOP, 1) },
         { "!=",     Token(TokenType::RELOP, 1) },

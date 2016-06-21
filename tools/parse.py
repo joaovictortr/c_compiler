@@ -37,7 +37,7 @@ with open(sys.argv[1]) as f:
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(5, "CONST", 0)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(6, "FUNCOES", 2)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(7, "FUNCOES", 0)
-    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(8, "FUNCAO", 11)
+    print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(8, "FUNCAO", 12)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(9, "MAIN", 5)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(10, "CMDS", 2)
     print "ParserState r{0} = makeState(ParserState::REDUCE, \"r{0}\", \"{1}\", {2});".format(11, "CMDS", 0)

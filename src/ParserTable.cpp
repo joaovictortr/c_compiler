@@ -147,6 +147,7 @@ void ParserTable::initTable()
 	ParserState e110 = makeState(ParserState::SHIFT, "e110");
 	ParserState e111 = makeState(ParserState::SHIFT, "e111");
 	ParserState e112 = makeState(ParserState::SHIFT, "e112");
+	ParserState e113 = makeState(ParserState::SHIFT, "e113");
 	/* Reductions */
 
 
@@ -157,7 +158,7 @@ void ParserTable::initTable()
 	ParserState r5 = makeState(ParserState::REDUCE, "r5", "CONST", 0);
 	ParserState r6 = makeState(ParserState::REDUCE, "r6", "FUNCOES", 2);
 	ParserState r7 = makeState(ParserState::REDUCE, "r7", "FUNCOES", 0);
-	ParserState r8 = makeState(ParserState::REDUCE, "r8", "FUNCAO", 11);
+	ParserState r8 = makeState(ParserState::REDUCE, "r8", "FUNCAO", 12);
 	ParserState r9 = makeState(ParserState::REDUCE, "r9", "MAIN", 5);
 	ParserState r10 = makeState(ParserState::REDUCE, "r10", "CMDS", 2);
 	ParserState r11 = makeState(ParserState::REDUCE, "r11", "CMDS", 0);
@@ -200,6 +201,7 @@ void ParserTable::initTable()
 	{ ParserTableKey(startState().tblIndex(), "PROG"), e1},
 	{ ParserTableKey(startState().tblIndex(), "DECL_VAR"), e2},
 	{ ParserTableKey(startState().tblIndex(), "TIPO"), e3},
+	{ ParserTableKey(startState().tblIndex(), "func"), r3},
 	{ ParserTableKey(startState().tblIndex(), "main"), r3},
 	{ ParserTableKey(startState().tblIndex(), "if"), r3},
 	{ ParserTableKey(startState().tblIndex(), "while"), r3},
@@ -210,13 +212,13 @@ void ParserTable::initTable()
 	{ ParserTableKey(startState().tblIndex(), "return"), r3},
 	{ ParserTableKey(e1.tblIndex(), "$"), acceptState()},
 	{ ParserTableKey(e2.tblIndex(), "CONST"), e4},
-	{ ParserTableKey(e2.tblIndex(), "TIPO"), r5},
+	{ ParserTableKey(e2.tblIndex(), "func"), r5},
 	{ ParserTableKey(e2.tblIndex(), "main"), r5},
 	{ ParserTableKey(e2.tblIndex(), "const"), e5},
 	{ ParserTableKey(e3.tblIndex(), "id"), e6},
 	{ ParserTableKey(e4.tblIndex(), "FUNCOES"), e7},
 	{ ParserTableKey(e4.tblIndex(), "FUNCAO"), e8},
-	{ ParserTableKey(e4.tblIndex(), "TIPO"), e9},
+	{ ParserTableKey(e4.tblIndex(), "func"), e113},
 	{ ParserTableKey(e4.tblIndex(), "main"), r7},
 	{ ParserTableKey(e5.tblIndex(), "id"), e10},
 	{ ParserTableKey(e6.tblIndex(), ";"), e11},
@@ -224,12 +226,13 @@ void ParserTable::initTable()
 	{ ParserTableKey(e7.tblIndex(), "main"), e13},
 	{ ParserTableKey(e8.tblIndex(), "FUNCOES"), e14},
 	{ ParserTableKey(e8.tblIndex(), "FUNCAO"), e8},
-	{ ParserTableKey(e8.tblIndex(), "TIPO"), e9},
+	{ ParserTableKey(e8.tblIndex(), "func"), e113},
 	{ ParserTableKey(e8.tblIndex(), "main"), r7},
 	{ ParserTableKey(e9.tblIndex(), "id"), e15},
 	{ ParserTableKey(e10.tblIndex(), "="), e16},
 	{ ParserTableKey(e11.tblIndex(), "DECL_VAR"), e17},
 	{ ParserTableKey(e11.tblIndex(), "TIPO"), e3},
+	{ ParserTableKey(e11.tblIndex(), "func"), r3},
 	{ ParserTableKey(e11.tblIndex(), "main"), r3},
 	{ ParserTableKey(e11.tblIndex(), "if"), r3},
 	{ ParserTableKey(e11.tblIndex(), "while"), r3},
@@ -245,7 +248,7 @@ void ParserTable::initTable()
 	{ ParserTableKey(e16.tblIndex(), "NUM"), e20},
 	{ ParserTableKey(e16.tblIndex(), "NUM_INT"), e110},
 	{ ParserTableKey(e16.tblIndex(), "NUM_FLOAT"), e111},
-	{ ParserTableKey(e17.tblIndex(), "TIPO"), r2},
+	{ ParserTableKey(e17.tblIndex(), "func"), r2},
 	{ ParserTableKey(e17.tblIndex(), "main"), r2},
 	{ ParserTableKey(e17.tblIndex(), "if"), r2},
 	{ ParserTableKey(e17.tblIndex(), "while"), r2},
@@ -254,6 +257,7 @@ void ParserTable::initTable()
 	{ ParserTableKey(e17.tblIndex(), "const"), r2},
 	{ ParserTableKey(e18.tblIndex(), "DECL_VAR"), e21},
 	{ ParserTableKey(e18.tblIndex(), "TIPO"), e3},
+	{ ParserTableKey(e18.tblIndex(), "func"), r3},
 	{ ParserTableKey(e18.tblIndex(), "main"), r3},
 	{ ParserTableKey(e18.tblIndex(), "if"), r3},
 	{ ParserTableKey(e18.tblIndex(), "while"), r3},
@@ -280,7 +284,7 @@ void ParserTable::initTable()
 	{ ParserTableKey(e21.tblIndex(), "return"), r11},
 	{ ParserTableKey(e22.tblIndex(), "{"), e36},
 	{ ParserTableKey(e23.tblIndex(), "CONST"), e37},
-	{ ParserTableKey(e23.tblIndex(), "TIPO"), r5},
+	{ ParserTableKey(e23.tblIndex(), "func"), r5},
 	{ ParserTableKey(e23.tblIndex(), "main"), r5},
 	{ ParserTableKey(e23.tblIndex(), "const"), e5},
 	{ ParserTableKey(e24.tblIndex(), "}"), e38},
@@ -337,6 +341,7 @@ void ParserTable::initTable()
 	{ ParserTableKey(e35.tblIndex(), "("), e46},
 	{ ParserTableKey(e36.tblIndex(), "DECL_VAR"), e47},
 	{ ParserTableKey(e36.tblIndex(), "TIPO"), e3},
+	{ ParserTableKey(e36.tblIndex(), "func"), r3},
 	{ ParserTableKey(e36.tblIndex(), "main"), r3},
 	{ ParserTableKey(e36.tblIndex(), "if"), r3},
 	{ ParserTableKey(e36.tblIndex(), "while"), r3},
@@ -345,7 +350,7 @@ void ParserTable::initTable()
 	{ ParserTableKey(e36.tblIndex(), "const"), r3},
 	{ ParserTableKey(e36.tblIndex(), "}"), r3},
 	{ ParserTableKey(e36.tblIndex(), "return"), r3},
-	{ ParserTableKey(e37.tblIndex(), "TIPO"), r4},
+	{ ParserTableKey(e37.tblIndex(), "func"), r4},
 	{ ParserTableKey(e37.tblIndex(), "main"), r4},
 	{ ParserTableKey(e38.tblIndex(), "$"), r9},
 	{ ParserTableKey(e39.tblIndex(), "}"), r10},
@@ -550,7 +555,7 @@ void ParserTable::initTable()
 	{ ParserTableKey(e99.tblIndex(), "}"), r20},
 	{ ParserTableKey(e99.tblIndex(), "return"), r20},
 	{ ParserTableKey(e100.tblIndex(), ")"), e103},
-	{ ParserTableKey(e101.tblIndex(), "TIPO"), r8},
+	{ ParserTableKey(e101.tblIndex(), "func"), r8},
 	{ ParserTableKey(e101.tblIndex(), "main"), r8},
 	{ ParserTableKey(e102.tblIndex(), "{"), e104},
 	{ ParserTableKey(e103.tblIndex(), "{"), e105},
@@ -611,7 +616,8 @@ void ParserTable::initTable()
 	{ ParserTableKey(e112.tblIndex(), "for"), r25},
 	{ ParserTableKey(e112.tblIndex(), "id"), r25},
 	{ ParserTableKey(e112.tblIndex(), "}"), r25},
-	{ ParserTableKey(e112.tblIndex(), "return"), r25}
+	{ ParserTableKey(e112.tblIndex(), "return"), r25},
+	{ ParserTableKey(e113.tblIndex(), "TIPO"), e9}
 	};
 
 

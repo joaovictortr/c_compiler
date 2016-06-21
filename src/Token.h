@@ -29,6 +29,7 @@ struct TokenType {
     static const int TYPE_CONST = 269;
     static const int MAIN = 270;
     static const int INCROP = 271;
+    static const int FUNCTION = 272;
 
     static string type2Str(int type) {
         switch(type) {
@@ -69,6 +70,8 @@ struct TokenType {
                 return "const"; break;
             case MAIN:
                 return "main"; break;
+            case FUNCTION:
+                return "func"; break;
             default:
                 string s;
                 s += static_cast<char>(type);
