@@ -1,9 +1,9 @@
 int a;
 
-float f()
+func float f()
 {
     int a;
-    a = -1;
+    a = 1;
     if (a == 0)
     {
         a = 2;
@@ -11,7 +11,7 @@ float f()
     return a;
 }
 
-int func2()
+func int func2()
 {
     int i;
     i = 1;

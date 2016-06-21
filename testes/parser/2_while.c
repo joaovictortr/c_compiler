@@ -3,7 +3,7 @@ int b;
 
 const pi = 3.14;
 
-int f()
+func int f()
 {
     int b;
     int k;

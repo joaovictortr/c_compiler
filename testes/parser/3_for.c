@@ -1,4 +1,4 @@
-char charFnc()
+func char charFnc()
 {
     int i;
     for(i = 0; i < 100; i++) {
